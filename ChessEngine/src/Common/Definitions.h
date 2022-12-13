@@ -4,9 +4,15 @@
 #define BOARD_SEQUENCE_NUMBER 120
 #define BOARD_REAL_NUMBER 64
 #define PIECE_TYPE_NUMBER 13
-#define COLOR_NUMBER 3
+#define COLOUR_NUMBER 3
 #define MAX_GAME_MOVES 2048
 #define MAX_OF_ONE_PICE 10
+#define CASTLE_BITS 16
+#define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
+#define TEST_FEN "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"
+
+
 typedef unsigned long long U64;
 
 enum {EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK};
@@ -27,22 +33,7 @@ enum {
 };
 
 
+#define TESTING_MODE false
 
 
-#define TESTING_MODE true
-
-//MUGRE PARA PODER DEBUGGEAR //TODO sacar este codigo asqueroso
-#define DEBUG
-#ifndef DEBUG
-#define ASSERT(n)
-#else
-#define ASSERT(n)\
-	if(!(n)){ \
-		printf("%s - Failed", #n);\
-		printf("On %s ", __DATE__);\
-		printf("At %s ", __TIME__);\
-		printf("In File %s ", __FILE__);\
-		printf("At Line %d\n ", __LINE__);\
-		exit(1);}
-#endif
 #endif

@@ -1,7 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include "Definitions.h";
+#include "BitBoard.h"
 
 //Structured used to undo moves
 typedef struct UNDO
@@ -14,10 +14,9 @@ typedef struct UNDO
 } UNDO;
 
 
-typedef struct Board
+typedef struct BOARD
 {
     int pieces [BOARD_SEQUENCE_NUMBER];
-    U64 pawns [COLOR_NUMBER];
     int Kings [2];
     int side;
     int enPassant;
@@ -29,15 +28,22 @@ typedef struct Board
 
     U64 positionKey;
     
-    int piece[PIECE_TYPE_NUMBER];
-    int bigPieces[COLOR_NUMBER];
-    int majorPieces[COLOR_NUMBER];
-    int minorPiecesp[COLOR_NUMBER];
+    int pieceNumber[PIECE_TYPE_NUMBER];
+
+    int bigPieces[COLOUR_NUMBER-1];
+    int majorPieces[COLOUR_NUMBER-1];
+    int minorPieces[COLOUR_NUMBER-1];
+    U64 pawns [COLOUR_NUMBER];
+    int material[COLOUR_NUMBER-1];
 
     UNDO histoty[MAX_GAME_MOVES];
 
     int pieceList[PIECE_TYPE_NUMBER][MAX_OF_ONE_PICE];
 
-} Board;
+} BOARD;
+
+extern void ResetBoard(BOARD *position);
+extern void PrintBoard(const BOARD* position);
+extern void UpdateListMaterial(BOARD *position);
 
 #endif
