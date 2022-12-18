@@ -19,7 +19,7 @@ U64 GeneratePositionKey(const BOARD *position){
 	if(position->enPassant != SQUARE_NULL)
 		finalKey ^= PieceKeys[EMPTY][position->enPassant];
 
-	finalKey ^= CastleKeys[position->castlePermision];
+	finalKey ^= CastleKeys[position->castlePermission];
 
 	return finalKey;
 }

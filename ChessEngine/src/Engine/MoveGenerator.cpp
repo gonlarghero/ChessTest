@@ -74,7 +74,7 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 		}
 
 		//castle
-		if(position->castlePermision & wKCastle){
+		if(position->castlePermission & wKCastle){
 			emptyRoad = position->pieces[F1] == EMPTY && position->pieces[G1] == EMPTY;
 			safeRoad = !SqAttacked(E1, BLACK, position) && !SqAttacked(F1, BLACK, position);
 			if(emptyRoad && safeRoad){
@@ -82,7 +82,7 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 			}
 		}
 
-		if(position->castlePermision & wQCastle){
+		if(position->castlePermission & wQCastle){
 			emptyRoad = position->pieces[D1] == EMPTY && position->pieces[C1] == EMPTY && position->pieces[B1] == EMPTY;
 			safeRoad = !SqAttacked(E1, BLACK, position) && !SqAttacked(D1, BLACK, position);
 			if(emptyRoad && safeRoad){
@@ -114,7 +114,7 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 		}
 
 		//castle
-		if(position->castlePermision & bKCastle){
+		if(position->castlePermission & bKCastle){
 			emptyRoad = position->pieces[F8] == EMPTY && position->pieces[G8] == EMPTY;
 		safeRoad = !SqAttacked(E8, WHITE, position) && !SqAttacked(F8, WHITE, position);
 			if(emptyRoad && safeRoad){
@@ -122,7 +122,7 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 			}
 		}
 
-		if(position->castlePermision & bQCastle){
+		if(position->castlePermission & bQCastle){
 			emptyRoad = position->pieces[D8] == EMPTY && position->pieces[C8] == EMPTY && position->pieces[B8] == EMPTY;
 			safeRoad = !SqAttacked(E8, WHITE, position) && !SqAttacked(D8, WHITE, position);
 			if(emptyRoad && safeRoad){

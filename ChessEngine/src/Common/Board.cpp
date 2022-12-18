@@ -29,10 +29,10 @@ void PrintBoard(const BOARD* position){
 	printf("side: %c\n",SideChar[position->side]);
 	printf("enPassant: %d\n",position->enPassant);
 	printf("castle: %c%c%c%c\n",
-		position->castlePermision & wKCastle ? 'K': '-',
-		position->castlePermision & wQCastle ? 'Q': '-',
-		position->castlePermision & bKCastle ? 'k': '-',
-		position->castlePermision & bQCastle ? 'q': '-');
+		position->castlePermission & wKCastle ? 'K': '-',
+		position->castlePermission & wQCastle ? 'Q': '-',
+		position->castlePermission & bKCastle ? 'k': '-',
+		position->castlePermission & bQCastle ? 'q': '-');
 	printf("PosKey: %08X\n",(unsigned int)position->positionKey);
 }
 
@@ -108,6 +108,6 @@ void ResetBoard(BOARD *position){
 	position->fiftyMove = 0;
 	position->play = 0;
 	position->halfPlay = 0;
-	position->castlePermision = 0;
+	position->castlePermission = 0;
 	position->positionKey = 0ULL;
 }

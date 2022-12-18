@@ -20,7 +20,7 @@ typedef struct BOARD
     int Kings [2];
     int side;
     int enPassant;
-    int castlePermision;
+    int castlePermission;
     int fiftyMove;
 
     int play;

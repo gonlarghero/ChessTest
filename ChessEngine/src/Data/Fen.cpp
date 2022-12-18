@@ -71,10 +71,10 @@ int ParseFen(char *fen, BOARD *position){
 		if(*fen == ' ')
 			break;
 		switch(*fen){
-			case 'K': position->castlePermision |= wKCastle; break;
-			case 'Q': position->castlePermision |= wQCastle; break;
-			case 'k': position->castlePermision |= bKCastle; break;
-			case 'q': position->castlePermision |= bQCastle; break;
+			case 'K': position->castlePermission |= wKCastle; break;
+			case 'Q': position->castlePermission |= wQCastle; break;
+			case 'k': position->castlePermission |= bKCastle; break;
+			case 'q': position->castlePermission |= bQCastle; break;
 			default: break;
 		}
 		fen++;
