@@ -44,7 +44,7 @@ char *PrintMove(const int move){
 
 void PrintMoveList(const MOVELIST *list){
 	int index,score,move = 0;
-	std::cout<<"MoveList: \n"<<list->count;
+	std::cout<<"MoveList: "<<list->count<<"\n";
 
 	for(index = 0; index < list->count ;++index){
 		move = list->moves[index].move;
