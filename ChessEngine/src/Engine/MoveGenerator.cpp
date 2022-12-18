@@ -2,18 +2,26 @@
 
 #include <iostream>
 
-int LoopSlidePiece[8] = {
+static void AddQuietMove(const BOARD *position, int move, MOVELIST *list);
+static void AddCaptureMove(const BOARD *position, int move, MOVELIST *list);
+static void AddEnPassantMove(const BOARD *position, int move, MOVELIST *list);
+static void AddWhitePawnMove(const BOARD *position, const int from, const int to, MOVELIST * list);
+static void AddWhitePawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list);
+static void AddBlackPawnMove(const BOARD *position, const int from, const int to, MOVELIST * list);
+static void AddBlackPawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list);
+
+const int LoopSlidePiece[8] = {
 	wB, wR, wQ, 0, bB, bR, bQ, 0
 };
 
-int LoopNonSlidePiece[8] = {
+const int LoopNonSlidePiece[8] = {
 	wN, wK, 0, bN, bK, 0
 };
 
-int LoopSlideIndex[2] = {0,4};
-int LoopNonSlideIndex[2] = {0,3};
+const int LoopSlideIndex[2] = {0,4};
+const int LoopNonSlideIndex[2] = {0,3};
 
-int PieceDirection[13][8] = {
+const int PieceDirection[13][8] = {
 		{0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0},
 		{-8, -19, -21, -12, 8, 19, 21, 12},
@@ -185,7 +193,7 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 	}
 }
 
-void AddWhitePawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list){
+static void AddWhitePawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list){
 
 	ASSERT(SquareOnBoard(from));
 	ASSERT(SquareOnBoard(to));
@@ -201,7 +209,7 @@ void AddWhitePawnCapMove(const BOARD *position, const int from, const int to, co
 	}
 }
 
-void AddWhitePawnMove(const BOARD *position, const int from, const int to, MOVELIST * list){
+static void AddWhitePawnMove(const BOARD *position, const int from, const int to, MOVELIST * list){
 
 	ASSERT(SquareOnBoard(from));
 	ASSERT(SquareOnBoard(to));
@@ -216,7 +224,7 @@ void AddWhitePawnMove(const BOARD *position, const int from, const int to, MOVEL
 	}
 }
 
-void AddBlackPawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list){
+static void AddBlackPawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list){
 
 	ASSERT(SquareOnBoard(from));
 	ASSERT(SquareOnBoard(to));
@@ -232,7 +240,7 @@ void AddBlackPawnCapMove(const BOARD *position, const int from, const int to, co
 	}
 }
 
-void AddBlackPawnMove(const BOARD *position, const int from, const int to, MOVELIST * list){
+static void AddBlackPawnMove(const BOARD *position, const int from, const int to, MOVELIST * list){
 
 	ASSERT(SquareOnBoard(from));
 	ASSERT(SquareOnBoard(to));
@@ -247,19 +255,19 @@ void AddBlackPawnMove(const BOARD *position, const int from, const int to, MOVEL
 	}
 }
 
-void AddQuietMove(const BOARD *position, int move, MOVELIST *list){
+static void AddQuietMove(const BOARD *position, int move, MOVELIST *list){
 	list->moves[list->count].move = move;
 	list->moves[list->count].score = 0;
 	list->count++;
 }
 
-void AddCaptureMove(const BOARD *position, int move, MOVELIST *list){
+static void AddCaptureMove(const BOARD *position, int move, MOVELIST *list){
 	list->moves[list->count].move = move;
 	list->moves[list->count].score = 0;
 	list->count++;
 }
 
-void AddEnPassantMove(const BOARD *position, int move, MOVELIST *list){
+static void AddEnPassantMove(const BOARD *position, int move, MOVELIST *list){
 	list->moves[list->count].move = move;
 	list->moves[list->count].score = 0;
 	list->count++;

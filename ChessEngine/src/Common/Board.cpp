@@ -85,7 +85,6 @@ void ResetBoard(BOARD *position){
 		position->pieces[Sq64ToSq120[index]] = EMPTY;
 	}
 
-	//pawns are stored for both colors
 	for(index = 0; index < COLOUR_NUMBER-1; ++index){
 		position->bigPieces[index] = 0;
 		position->majorPieces[index] = 0;
@@ -93,7 +92,11 @@ void ResetBoard(BOARD *position){
 		position->material[index] = 0;
 		position->pawns[index] = 0ULL;
 	}
-	position->pawns[COLOUR_NUMBER]= 0ULL;
+
+	//pawns are stored for both colors
+	for(index = 0; index < COLOUR_NUMBER; ++index){
+		position->pawns[index] = 0ULL;
+	}
 
 	for(index = 0; index < PIECE_TYPE_NUMBER; ++index){
 		position->pieceNumber[index] = 0;
