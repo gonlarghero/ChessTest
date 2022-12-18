@@ -42,7 +42,7 @@ void UpdateListMaterial(BOARD *position){
 	for(index = 0; index < BOARD_SEQUENCE_NUMBER; ++index){
 		square = index;
 		piece = position->pieces[index];
-		if(square != SQUARE_NULL && piece != EMPTY){
+		if(piece != SQUARE_NULL && piece != EMPTY){
 			colour = PieceColour[piece];
 			if(PieceBig[piece])
 				position->bigPieces[colour]++;

@@ -5,4 +5,9 @@
 #define SETBIT(bb,square) ((bb) |= SetMask[(square)])
 #define CLEARBIT(bb,square) ((bb) &= ClearMask[(square)])
 
+#define IsBQ(p) (PieceBishopQueen[(p)])
+#define IsRQ(p) (PieceRookQueen[(p)])
+#define IsKn(p) (PieceKnight[(p)])
+#define IsKi(p) (PieceKing[(p)])
+
 #endif

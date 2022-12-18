@@ -26,6 +26,11 @@ int PieceColour[PIECE_TYPE_NUMBER] = {BOTH,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,B
 int FilesBoard[BOARD_SEQUENCE_NUMBER];
 int RanksBoard[BOARD_SEQUENCE_NUMBER];
 
+int PieceKnight[PIECE_TYPE_NUMBER] = {false,false,true,false,false,false,false,false,true,false,false,false,false};
+int PieceKing[PIECE_TYPE_NUMBER] = {false,false,false,false,false,false,true,false,false,false,false,false,true};
+int PieceRookQueen[PIECE_TYPE_NUMBER] = {false,false,false,false,true,true,false,false,false,false,true,true,false};
+int PieceBishopQueen[PIECE_TYPE_NUMBER] = {false,false,false,true,false,true,false,false,false,true,false,true,false};
+
 
 U64 RAND_AUX(){
 	return (U64) rand();

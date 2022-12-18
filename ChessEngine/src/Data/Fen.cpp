@@ -1,6 +1,8 @@
 #include "Fen.h"
 
 #include <stdio.h>
+#include <iostream>
+
 int ParseFen(char *fen, BOARD *position){
 
 	int rank = RANK_8;
