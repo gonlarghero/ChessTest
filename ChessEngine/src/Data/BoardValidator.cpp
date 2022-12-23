@@ -10,31 +10,34 @@ bool CheckBoard(const BOARD *position){
 	int t_minorPiece[COLOUR_NUMBER-1] = {0};
 	int t_material[COLOUR_NUMBER-1] = {0};
 
-	int square64, square120, t_piece, colour, pawnCount = 0;
-	int t_piece_number = 0;
+	int t_piece_number,square64, square120, t_piece, colour, pawnCount = 0;
 
-	U64 t_pawns[COLOUR_NUMBER];
+	U64 t_pawns[COLOUR_NUMBER]= {0ULL};
+
 	t_pawns[WHITE] = position->pawns[WHITE];
 	t_pawns[BLACK] = position->pawns[BLACK];
 	t_pawns[BOTH] = position->pawns[BOTH];
 
 	for(t_piece = wP; t_piece <= bK; ++t_piece){
-		square120 = position->pieceList[t_piece][t_piece_number];
-		ASSERT(position->pieces[square120] == t_piece);
+		for(t_piece_number = 0; t_piece_number < position->pieceNumber[t_piece]; ++t_piece_number){
+			square120 = position->pieceList[t_piece][t_piece_number];
+			ASSERT(position->pieces[square120] == t_piece);
+		}
 	}
+
 	for(square64 = 0; square64 < BOARD_REAL_NUMBER; ++square64){
 		square120 = Sq64ToSq120[square64];
 		t_piece = position->pieces[square120];
 		t_pieceNumber[t_piece]++;
 		colour = PieceColour[t_piece];
-		if(PieceBig[t_piece])
-			t_bigPiece[colour]++;
-		if(PieceMinor[t_piece])
-			t_minorPiece[colour]++;
-		if(PieceMajor[t_piece])
-			t_majorPiece[colour]++;
+
+		if(PieceBig[t_piece]) t_bigPiece[colour]++;
+		if(PieceMinor[t_piece])	t_minorPiece[colour]++;
+		if(PieceMajor[t_piece])	t_majorPiece[colour]++;
+
 		t_material[colour] += PieceValue[t_piece];
 	}
+
 	for(t_piece = wP; t_piece <= bK; ++t_piece)
 		ASSERT(t_pieceNumber[t_piece] == position->pieceNumber[t_piece]);
 
@@ -72,6 +75,8 @@ bool CheckBoard(const BOARD *position){
 
 	ASSERT(position->pieces[position->Kings[WHITE]] == wK);
 	ASSERT(position->pieces[position->Kings[BLACK]] == bK);
+
+	ASSERT(position->castlePermission >= 0 && position->castlePermission <= 15);
 
 	return true;
 }

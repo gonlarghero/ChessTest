@@ -7,7 +7,7 @@
 typedef struct UNDO
 {
     int move;
-    int castlePermision;
+    int castlePermission;
     int enPassant;
     int fiftyMove;
     U64 positionKey;
@@ -24,7 +24,7 @@ typedef struct BOARD
     int fiftyMove;
 
     int play;
-    int halfPlay;
+    int historyPlay;
 
     U64 positionKey;
     
@@ -36,7 +36,7 @@ typedef struct BOARD
     U64 pawns [COLOUR_NUMBER];
     int material[COLOUR_NUMBER-1];
 
-    UNDO histoty[MAX_GAME_MOVES];
+    UNDO history[MAX_GAME_MOVES];
 
     int pieceList[PIECE_TYPE_NUMBER][MAX_OF_ONE_PICE];
 

@@ -107,7 +107,7 @@ void ResetBoard(BOARD *position){
 	position->enPassant = SQUARE_NULL;
 	position->fiftyMove = 0;
 	position->play = 0;
-	position->halfPlay = 0;
+	position->historyPlay = 0;
 	position->castlePermission = 0;
 	position->positionKey = 0ULL;
 }

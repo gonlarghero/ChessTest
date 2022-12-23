@@ -1,5 +1,7 @@
 #include "Attack.h"
 
+#include <iostream>
+
 const int KnDir[8] = {-8, -19, -21, -12, 8, 19, 21, 12};
 const int RkDir[4] = {-1, -10, 1, 10};
 const int BiDir[4] = {-9, -11, 11, 9};
@@ -19,17 +21,19 @@ bool SqAttacked(const int square, const int side, const BOARD *position){
 		if(position->pieces[square-11] == wP || position->pieces[square-9] == wP)
 			return true;
 	}
-	if(position->pieces[square+11] == bP || position->pieces[square+9] == bP)
-		return true;
+	else{
+		if(position->pieces[square+11] == bP || position->pieces[square+9] == bP)
+			return true;
+	}
 
 	for(index = 0; index < 8; ++index){
 		//knights
 		piece = position->pieces[square + KnDir[index]];
-		if(IsKn(piece) && PieceColour[piece] == side)
+		if(piece != SQUARE_NULL && IsKn(piece) && PieceColour[piece] == side)
 			return true;
 		//kings
 		piece = position->pieces[square + KiDir[index]];
-		if(IsKi(piece) && PieceColour[piece] == side)
+		if(piece != SQUARE_NULL && IsKi(piece) && PieceColour[piece] == side)
 			return true;
 	}
 
@@ -40,7 +44,7 @@ bool SqAttacked(const int square, const int side, const BOARD *position){
 		piece = position->pieces[t_square];
 		while(piece != SQUARE_NULL){
 			if(piece != EMPTY){
-				if(IsRQ(piece) && PieceColour[piece]){
+				if(IsRQ(piece) && PieceColour[piece] == side){
 					return true;
 				}
 				break;
@@ -54,7 +58,7 @@ bool SqAttacked(const int square, const int side, const BOARD *position){
 		piece = position->pieces[t_square];
 		while(piece != SQUARE_NULL){
 			if(piece != EMPTY){
-				if(IsBQ(piece) && PieceColour[piece]){
+				if(IsBQ(piece) && PieceColour[piece] == side){
 					return true;
 				}
 				break;

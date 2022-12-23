@@ -3,6 +3,9 @@
 
 #include "../Board.h"
 #include "../Validate.h"
+#include "../../Data/BoardValidator.h"
+#include "Move.h"
+#include "Attack.h"
 
 
 //Horrible forma de definir constantes dependiente del nombre de la variable position
@@ -12,6 +15,7 @@
 #define HASH_EP (position->positionKey ^= (PieceKeys[EMPTY][(position->enPassant)]))
 
 
-
+bool MakeMove(BOARD *position, int move);
+void TakeMove(BOARD *position);
 
 #endif

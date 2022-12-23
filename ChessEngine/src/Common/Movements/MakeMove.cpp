@@ -1,5 +1,7 @@
 #include "MakeMove.h"
 
+#include <iostream>
+
 const int CastlePermission[120] = {
 	15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
 	15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
@@ -10,7 +12,7 @@ const int CastlePermission[120] = {
 	15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
 	15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
 	15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-	15, 7, 15, 15, 15, 3, 15, 15, 11, 15,
+	15,  7, 15, 15, 15,  3, 15, 15, 11, 15,
 	15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
 	15, 15, 15, 15, 15, 15, 15, 15, 15, 15
 };
@@ -22,12 +24,10 @@ static void MovePiece(const int from, const int to, BOARD * position);
 
 
 
-
-
-
 static void ClearPiece(int square, BOARD *position){
 
 	ASSERT(SquareOnBoard(square));
+	ASSERT(CheckBoard(position));
 
 	int piece = position->pieces[square];
 
@@ -36,6 +36,8 @@ static void ClearPiece(int square, BOARD *position){
 	int colour = PieceColour[piece];
 	int index = 0;
 	int t_pieceNum = -1;
+
+	ASSERT(SideValid(colour));
 
 	HASH_PIECE(piece,square);
 
@@ -49,11 +51,11 @@ static void ClearPiece(int square, BOARD *position){
 		else
 			position->minorPieces[colour]--;
 	}else{
-		CLEARBIT(position->pawns[colour],Sq120ToSq64(square));
-		CLEARBIT(position->pawns[BOTH],Sq120ToSq64(square));
+		CLEARBIT(position->pawns[colour],Sq120ToSq64[square]);
+		CLEARBIT(position->pawns[BOTH],Sq120ToSq64[square]);
 	}
 
-	for(index = 0; index < position->pieceNumber[piece]; +++piece){
+	for(index = 0; index < position->pieceNumber[piece]; ++index){
 		if(position->pieceList[piece][index] == square){
 			t_pieceNum = index;
 			break;
@@ -61,6 +63,7 @@ static void ClearPiece(int square, BOARD *position){
 	}
 
 	ASSERT(t_pieceNum != -1);
+	ASSERT(t_pieceNum>=0&&t_pieceNum<10);
 
 	position->pieceNumber[piece]--;
 	position->pieceList[piece][t_pieceNum] = position->pieceList[piece][position->pieceNumber[piece]];
@@ -73,11 +76,11 @@ static void AddPiece(const int square, BOARD *position, int piece){
 	ASSERT(SquareOnBoard(square));
 
 	int colour = PieceColour[piece];
+	ASSERT(SideValid(colour));
 
 	HASH_PIECE(piece,square);
 
 	position->pieces[square] = piece;
-	position->material[colour] += PieceValue[piece];
 
 	if(PieceBig[piece]){
 		position->bigPieces[colour]++;
@@ -86,11 +89,11 @@ static void AddPiece(const int square, BOARD *position, int piece){
 		else
 			position->minorPieces[colour]++;
 	}else{
-		SETBIT(position->pawns[colour],Sq120ToSq64(square));
-		SETBIT(position->pawns[BOTH],Sq120ToSq64(square));
+		SETBIT(position->pawns[colour],Sq120ToSq64[square]);
+		SETBIT(position->pawns[BOTH],Sq120ToSq64[square]);
 	}
 
-
+	position->material[colour] += PieceValue[piece];
 	position->pieceList[piece][position->pieceNumber[piece]] = square;
 	position->pieceNumber[piece]++;
 
@@ -104,19 +107,24 @@ static void MovePiece(const int from, const int to, BOARD * position){
 	int index = 0;
 	int piece = position->pieces[from];
 	int colour = PieceColour[piece];
+	ASSERT(SideValid(colour));
+	ASSERT(PieceValid(piece));
+
 #ifdef DEBUG
 	bool t_pieceNumber = false;
 #endif
+
 	HASH_PIECE(piece,from);
 	position->pieces[from] = EMPTY;
+
 	HASH_PIECE(piece,to);
 	position->pieces[to] = piece;
 
 	if(!PieceBig[piece]){
-		CLEARBIT(position->pawns[colour],Sq120ToSq64(from));
-		CLEARBIT(position->pawns[BOTH],Sq120ToSq64(from));
-		SETBIT(position->pawns[colour],Sq120ToSq64(to));
-		SETBIT(position->pawns[BOTH],Sq120ToSq64(to));
+		CLEARBIT(position->pawns[colour],Sq120ToSq64[from]);
+		CLEARBIT(position->pawns[BOTH],Sq120ToSq64[from]);
+		SETBIT(position->pawns[colour],Sq120ToSq64[to]);
+		SETBIT(position->pawns[BOTH],Sq120ToSq64[to]);
 	}
 
 	for(index = 0; index < position->pieceNumber[piece]; ++index){
@@ -125,7 +133,199 @@ static void MovePiece(const int from, const int to, BOARD * position){
 #ifdef DEBUG
 			t_pieceNumber = true;
 #endif
+			break;
 		}
 	}
 	ASSERT(t_pieceNumber);
+}
+
+bool MakeMove(BOARD *position, int move){
+
+	ASSERT(CheckBoard(position));
+
+	int from = FROMSQ(move);
+	int to = TOSQ(move);
+	int side = position->side;
+
+	ASSERT(SquareOnBoard(from));
+	ASSERT(SquareOnBoard(to));
+	ASSERT(SideValid(side));
+	ASSERT(PieceValid(position->pieces[from]));
+	ASSERT(position->historyPlay >= 0 && position->historyPlay < MAX_GAME_MOVES);
+	ASSERT(position->play >= 0 && position->play < MAXDEPTH);
+
+	position->history[position->historyPlay].positionKey = position->positionKey;
+
+	if(move & MFLAGEP){
+		if(side == WHITE)
+			ClearPiece(to - 10, position);
+		else
+			ClearPiece(to + 10, position);
+	}else if(move & MFLAGCA){
+		switch(to){
+			case C1:
+				MovePiece(A1,D1,position);
+				break;
+			case C8:
+				MovePiece(A8,D8,position);
+				break;
+			case G1:
+				MovePiece(H1,F1,position);
+				break;
+			case G8:
+				MovePiece(H8,F8,position);
+				break;
+			default: ASSERT(false); break;
+		}
+	}
+
+	if(position->enPassant != SQUARE_NULL)
+		HASH_EP;
+	HASH_CA;
+
+	position->history[position->historyPlay].move = move;
+	position->history[position->historyPlay].fiftyMove = position->fiftyMove;
+	position->history[position->historyPlay].enPassant = position->enPassant;
+	position->history[position->historyPlay].castlePermission = position->castlePermission;
+
+	position->castlePermission &= CastlePermission[from];
+	position->castlePermission &= CastlePermission[to];
+	position->enPassant = SQUARE_NULL;
+	HASH_CA;
+
+
+	int captured = CAPTURED(move);
+	position->fiftyMove++;
+
+	if(captured != EMPTY){
+		ASSERT(PieceValid(captured));
+		ClearPiece(to, position);
+		position->fiftyMove = 0;
+	}
+
+
+	position->historyPlay++;
+	position->play++;
+
+	ASSERT(position->historyPlay >= 0 && position->historyPlay < MAX_GAME_MOVES);
+	ASSERT(position->play >= 0 && position->play < MAXDEPTH);
+
+
+	if(PiecePawn[position->pieces[from]]){
+		position->fiftyMove = 0;
+		if(move & MFLAGPS){
+			if(side == WHITE){
+				position->enPassant = from + 10;
+				ASSERT(RanksBoard[position->enPassant] == RANK_3);
+			}
+			else{
+				position->enPassant = from - 10;
+				ASSERT(RanksBoard[position->enPassant] == RANK_6);
+			}
+			HASH_EP;
+		}
+	}
+
+	MovePiece(from, to, position);
+
+	int promotedPiece = PROMOTED(move);
+	if(promotedPiece != EMPTY){
+		ASSERT(PieceValid(promotedPiece) && !PiecePawn[promotedPiece]);
+		ClearPiece(to, position);
+		AddPiece(to, position, promotedPiece);
+	}
+
+	if(PieceKing[position->pieces[to]]){
+		position->Kings[position->side] = to;
+	}
+
+	position->side ^= 1;
+	HASH_SIDE;
+
+	ASSERT(CheckBoard(position));
+
+	if(SqAttacked(position->Kings[side], position->side, position)){
+		TakeMove(position);
+		return false;
+	}
+
+	return true;
+}
+
+void TakeMove(BOARD *position){
+
+	ASSERT(CheckBoard(position));
+
+	position->historyPlay--;
+	position->play--;
+
+	ASSERT(position->historyPlay >= 0 && position->historyPlay < MAX_GAME_MOVES);
+	ASSERT(position->play >= 0 && position->play < MAXDEPTH);
+
+
+	int move = position->history[position->historyPlay].move;
+	int from = FROMSQ(move);
+	int to = TOSQ(move);
+
+	ASSERT(SquareOnBoard(from));
+	ASSERT(SquareOnBoard(to));
+
+	if(position->enPassant != SQUARE_NULL)
+		HASH_EP;
+	HASH_CA;
+
+	position->fiftyMove = position->history[position->historyPlay].fiftyMove;
+	position->enPassant = position->history[position->historyPlay].enPassant;
+	position->castlePermission = position->history[position->historyPlay].castlePermission;
+
+	if(position->enPassant != SQUARE_NULL)
+		HASH_EP;
+	HASH_CA;
+
+	position->side ^= 1;
+	HASH_SIDE;
+
+	if(MFLAGEP & move){
+		if(position->side == WHITE)
+			AddPiece(to-10, position, bP);
+		else
+			AddPiece(to+10, position, wP);
+	}else if(MFLAGCA & move){
+		switch(to){
+			case C1:
+				MovePiece(D1,A1,position);
+				break;
+			case C8:
+				MovePiece(D8,A8,position);
+				break;
+			case G1:
+				MovePiece(F1,H1,position);
+				break;
+			case G8:
+				MovePiece(F8,H8,position);
+				break;
+			default: ASSERT(false); break;
+		}
+	}
+
+	MovePiece(to, from, position);
+
+	if(PieceKing[position->pieces[from]]){
+		position->Kings[position->side] = from;
+	}
+
+	int captured = CAPTURED(move);
+	if(captured != EMPTY){
+		ASSERT(PieceValid(captured));
+		AddPiece(to, position, captured);
+	}
+
+	int promotedPiece = PROMOTED(move);
+	if(promotedPiece != EMPTY){
+		ASSERT(PieceValid(promotedPiece) && !PiecePawn[promotedPiece]);
+		ClearPiece(from, position);
+		AddPiece(from, position, (PieceColour[promotedPiece] == WHITE ? wP : bP));
+	}
+
+	ASSERT(CheckBoard(position));
 }

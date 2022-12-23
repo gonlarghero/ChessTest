@@ -28,7 +28,7 @@ extern int PieceKing[PIECE_TYPE_NUMBER];
 extern int PieceRookQueen[PIECE_TYPE_NUMBER];
 extern int PieceBishopQueen[PIECE_TYPE_NUMBER];
 extern int PieceSlides[PIECE_TYPE_NUMBER];
-
+extern int PiecePawn[PIECE_TYPE_NUMBER];
 
 //Generates 64 bit random in blocks of 15
 U64 RAND_64();

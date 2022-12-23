@@ -5,7 +5,7 @@
 
 #include "Data/Fen.h"
 #include "Common/Board.h"
-#include "Engine/MoveGenerator.h"
+#include "Engine/Perft.h"
 
 int main(int, char**) {
 
@@ -14,13 +14,10 @@ int main(int, char**) {
     StartInterface();
 
     BOARD board[1];
-    ParseFen(TEST_FEN, board);
-    PrintBoard(board);
-
     MOVELIST list[1];
+    ParseFen(TEST_FEN, board);
 
-    GenerateAllMoves(board, list);
-    PrintMoveList(list);
+    PerfTest(3, board);
 
     return 0;
 }

@@ -8,7 +8,7 @@
 #include "../Common/Movements/Attack.h"
 
 
-#define MOVE_M(f,t,ca,pro,fl) ((f)|((t)<<7)|((ca)<<14)|((pro)<<20)|(fl))
+#define MOVE_M(f,t,ca,pro,fl) ((f)|((t)<< 7)|((ca) << 14)|((pro) << 20)|(fl))
 #define SQUAREOFFBOARD(sq) (FilesBoard[(sq)] == SQUARE_NULL)
 
 

@@ -42,12 +42,13 @@ int DirectionNumber[13] = {0,0,8,4,4,8,8,0,8,4,4,8,8};
 void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 
 	ASSERT(CheckBoard(position));
+
 	list->count = 0;
+
 	int piece = EMPTY;
 	int side = position->side;
-	int square, t_square, pieceNumber = 0;
+	int dir,index,pieceIndex,square, t_square, pieceNumber = 0;
 
-	int dir, index, pieceIndex = 0;
 	bool emptyRoad,safeRoad;
 
 	if(side == WHITE){
@@ -59,7 +60,7 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 			if(position->pieces[square + 10] == EMPTY){
 				AddWhitePawnMove(position, square, square + 10, list);
 				if(RanksBoard[square] == RANK_2 && position->pieces[square + 20] == EMPTY)
-					AddQuietMove(position, MOVE_M(square,square + 20,EMPTY,EMPTY,MFLAGPS), list);
+					AddQuietMove(position, MOVE_M(square,(square + 20),EMPTY,EMPTY,MFLAGPS), list);
 			}
 
 			if(!SQUAREOFFBOARD(square + 9) && PieceColour[position->pieces[square + 9]] == BLACK)
@@ -67,10 +68,13 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 			if(!SQUAREOFFBOARD(square + 11) && PieceColour[position->pieces[square + 11]] == BLACK)
 				AddWhitePawnCapMove(position, square, square + 11, position->pieces[square + 11], list);
 
-			if(square + 9 == position->enPassant)
-				AddCaptureMove(position,MOVE_M(square,square + 9, EMPTY,EMPTY,MFLAGEP),list);
-			if(square + 11 == position->enPassant)
-				AddCaptureMove(position,MOVE_M(square,square + 11, EMPTY,EMPTY,MFLAGEP),list);
+			if(position->enPassant != SQUARE_NULL){
+				if(square + 9 == position->enPassant)
+					AddEnPassantMove(position,MOVE_M(square,(square + 9), EMPTY,EMPTY,MFLAGEP),list);
+				if(square + 11 == position->enPassant)
+					AddEnPassantMove(position,MOVE_M(square,(square + 11), EMPTY,EMPTY,MFLAGEP),list);
+			}
+
 		}
 
 		//castle
@@ -91,7 +95,6 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 		}
 	}else{
 		//pawns
-		std::cout<<position->enPassant<<" ENPASSANT\n";
 		for(pieceNumber = 0; pieceNumber < position->pieceNumber[bP]; ++pieceNumber){
 			square = position->pieceList[bP][pieceNumber];
 			ASSERT(SquareOnBoard(square));
@@ -99,7 +102,7 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 			if(position->pieces[square - 10] == EMPTY){
 				AddBlackPawnMove(position, square, square - 10, list);
 				if(RanksBoard[square] == RANK_7 && position->pieces[square - 20] == EMPTY)
-					AddQuietMove(position, MOVE_M(square,square - 20,EMPTY,EMPTY,MFLAGPS), list);
+					AddQuietMove(position, MOVE_M(square,(square - 20),EMPTY,EMPTY,MFLAGPS), list);
 			}
 
 			if(!SQUAREOFFBOARD(square - 9) && PieceColour[position->pieces[square - 9]] == WHITE)
@@ -107,16 +110,18 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 			if(!SQUAREOFFBOARD(square - 11) && PieceColour[position->pieces[square - 11]] == WHITE)
 				AddBlackPawnCapMove(position, square, square - 11, position->pieces[square - 11], list);
 
-			if(square - 9 == position->enPassant)
-				AddCaptureMove(position,MOVE_M(square,square - 9, EMPTY,EMPTY,MFLAGEP),list);
-			if(square - 11 == position->enPassant)
-				AddCaptureMove(position,MOVE_M(square,square - 11, EMPTY,EMPTY,MFLAGEP),list);
+			if(position->enPassant != SQUARE_NULL){
+				if(square - 9 == position->enPassant)
+					AddEnPassantMove(position,MOVE_M(square,(square - 9), EMPTY,EMPTY,MFLAGEP),list);
+				if(square - 11 == position->enPassant)
+					AddEnPassantMove(position,MOVE_M(square,(square - 11), EMPTY,EMPTY,MFLAGEP),list);
+			}
 		}
 
 		//castle
 		if(position->castlePermission & bKCastle){
 			emptyRoad = position->pieces[F8] == EMPTY && position->pieces[G8] == EMPTY;
-		safeRoad = !SqAttacked(E8, WHITE, position) && !SqAttacked(F8, WHITE, position);
+			safeRoad = !SqAttacked(E8, WHITE, position) && !SqAttacked(F8, WHITE, position);
 			if(emptyRoad && safeRoad){
 				AddQuietMove(position, MOVE_M(E8,G8,EMPTY,EMPTY,MFLAGCA), list);
 			}
@@ -198,6 +203,7 @@ static void AddWhitePawnCapMove(const BOARD *position, const int from, const int
 	ASSERT(SquareOnBoard(from));
 	ASSERT(SquareOnBoard(to));
 	ASSERT(PieceValidEmpty(cap));
+	ASSERT(CheckBoard(position));
 
 	if(RanksBoard[from] == RANK_7){
 		AddCaptureMove(position,MOVE_M(from,to,cap,wQ,0),list);
@@ -213,6 +219,7 @@ static void AddWhitePawnMove(const BOARD *position, const int from, const int to
 
 	ASSERT(SquareOnBoard(from));
 	ASSERT(SquareOnBoard(to));
+	ASSERT(CheckBoard(position));
 
 	if(RanksBoard[from] == RANK_7){
 		AddQuietMove(position,MOVE_M(from,to,EMPTY,wQ,0),list);
@@ -226,9 +233,10 @@ static void AddWhitePawnMove(const BOARD *position, const int from, const int to
 
 static void AddBlackPawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list){
 
+	ASSERT(PieceValidEmpty(cap));
 	ASSERT(SquareOnBoard(from));
 	ASSERT(SquareOnBoard(to));
-	ASSERT(PieceValidEmpty(cap));
+	ASSERT(CheckBoard(position));
 
 	if(RanksBoard[from] == RANK_2){
 		AddCaptureMove(position,MOVE_M(from,to,cap,bQ,0),list);
@@ -244,6 +252,7 @@ static void AddBlackPawnMove(const BOARD *position, const int from, const int to
 
 	ASSERT(SquareOnBoard(from));
 	ASSERT(SquareOnBoard(to));
+	ASSERT(CheckBoard(position));
 
 	if(RanksBoard[from] == RANK_2){
 		AddQuietMove(position,MOVE_M(from,to,EMPTY,bQ,0),list);
@@ -256,18 +265,37 @@ static void AddBlackPawnMove(const BOARD *position, const int from, const int to
 }
 
 static void AddQuietMove(const BOARD *position, int move, MOVELIST *list){
+
+	ASSERT(SquareOnBoard(FROMSQ(move)));
+	ASSERT(SquareOnBoard(TOSQ(move)));
+	ASSERT(CheckBoard(position));
+	ASSERT(position->play >=0 && position->play < MAXDEPTH);
+
 	list->moves[list->count].move = move;
 	list->moves[list->count].score = 0;
 	list->count++;
 }
 
 static void AddCaptureMove(const BOARD *position, int move, MOVELIST *list){
+
+	ASSERT(SquareOnBoard(FROMSQ(move)));
+	ASSERT(SquareOnBoard(TOSQ(move)));
+	ASSERT(PieceValid(CAPTURED(move)));
+	ASSERT(CheckBoard(position));
+
 	list->moves[list->count].move = move;
 	list->moves[list->count].score = 0;
 	list->count++;
 }
 
 static void AddEnPassantMove(const BOARD *position, int move, MOVELIST *list){
+
+	ASSERT(SquareOnBoard(FROMSQ(move)));
+	ASSERT(SquareOnBoard(TOSQ(move)));
+	ASSERT(CheckBoard(position));
+	ASSERT((RanksBoard[TOSQ(move)] == RANK_6 && position->side == WHITE) ||
+			(RanksBoard[TOSQ(move)] == RANK_3 && position->side == BLACK));
+
 	list->moves[list->count].move = move;
 	list->moves[list->count].score = 0;
 	list->count++;

@@ -31,6 +31,7 @@ int PieceKing[PIECE_TYPE_NUMBER] = {false,false,false,false,false,false,true,fal
 int PieceRookQueen[PIECE_TYPE_NUMBER] = {false,false,false,false,true,true,false,false,false,false,true,true,false};
 int PieceBishopQueen[PIECE_TYPE_NUMBER] = {false,false,false,true,false,true,false,false,false,true,false,true,false};
 int PieceSlides[PIECE_TYPE_NUMBER] = {false,false,false,true,true,true,false,false,false,true,true,true,false};
+int PiecePawn[PIECE_TYPE_NUMBER] = {false,true,false,false,false,false,false,true,false,true,true,true,false};
 
 U64 RAND_AUX(){
 	return (U64) rand();
