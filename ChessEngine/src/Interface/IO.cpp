@@ -54,4 +54,43 @@ void PrintMoveList(const MOVELIST *list){
 	std::cout<<"MoveList Total "<< list->count << " moves: \n\n";
 }
 
+int ParseMove(char *ptrChar, BOARD* position){
+
+	if(ptrChar[0] > 'h' || ptrChar[0] < 'a') return NOMOVE;
+	if(ptrChar[1] > '8' || ptrChar[1] < '1') return NOMOVE;
+	if(ptrChar[2] > 'h' || ptrChar[2] < 'a') return NOMOVE;
+	if(ptrChar[3] > '8' || ptrChar[3] < '1') return NOMOVE;
+
+	int from = FR2SQ(ptrChar [0] - 'a', ptrChar[1] - '1');
+	int to = FR2SQ(ptrChar [2] - 'a', ptrChar[3] - '1');
+
+	std::cout<<"Move: "<<ptrChar<<" from: "<< from<<" to: "<<to<<"\n";
+
+	ASSERT(SquareOnBoard(from) && SquareOnBoard(to));
+
+	MOVELIST list[1];
+	GenerateAllMoves(position, list);
+	int moveNum,move = 0;
+	int promotionPiece = EMPTY;
+
+	for(moveNum = 0; moveNum <list->count; ++moveNum){
+		move = list->moves[moveNum].move;
+		if(FROMSQ(move) == from && TOSQ(move) == to){
+			promotionPiece = PROMOTED(move);
+			if(promotionPiece != EMPTY){
+				if(IsRQ(promotionPiece) && !IsBQ(promotionPiece) && ptrChar[4] == 'r')
+					return move;
+				else if(!IsRQ(promotionPiece) && IsBQ(promotionPiece) && ptrChar[4] == 'b')
+					return move;
+				else if(IsRQ(promotionPiece) && IsBQ(promotionPiece) && ptrChar[4] == 'q')
+					return move;
+				else if(IsKn(promotionPiece) && ptrChar[4] == 'n')
+					return move;
+			}
+			return move;
+		}
+	}
+
+	return NOMOVE;
+}
 

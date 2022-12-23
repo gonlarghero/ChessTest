@@ -10,6 +10,7 @@
 #define MAX_OF_ONE_PICE 10
 #define CASTLE_BITS 16
 #define MAXDEPTH 64
+#define NOMOVE 0
 
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 #define TEST_FEN "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"
