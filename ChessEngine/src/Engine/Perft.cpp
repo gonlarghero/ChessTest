@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <windows.h>
 
 long leafNodes;
 
@@ -38,6 +39,9 @@ void PerfTest(int depth, BOARD *position){
 	std::cout<<"\nSTARTING TEST TO DEPTH: "<< depth<<"\n";
 
 	leafNodes = 0;
+
+	int start = GetTickCount();
+
 	MOVELIST list[1];
 	GenerateAllMoves(position, list);
 
@@ -54,7 +58,7 @@ void PerfTest(int depth, BOARD *position){
 		long oldnodes = leafNodes - cumnodes;
 		std::cout<<"MOVE: "<<moveNum+1<<" : "<<PrintMove(move)<<" : "<<oldnodes<<"\n";
 	}
-	std::cout<<std::setprecision(6)<<"TEST COMPLETE: "<<leafNodes<<" VISITED.\n";
+	std::cout<<std::setprecision(6)<<"TEST COMPLETE: "<<leafNodes<<" VISITED IN "<<GetTickCount()- start<<" MILISECONDS.\n";
 	return;
 
 }

@@ -2,6 +2,8 @@
 #define BOARD_H
 
 #include "BitBoard.h"
+#include "Movements/Move.h"
+
 
 //Structured used to undo moves
 typedef struct UNDO
@@ -39,6 +41,8 @@ typedef struct BOARD
     UNDO history[MAX_GAME_MOVES];
 
     int pieceList[PIECE_TYPE_NUMBER][MAX_OF_ONE_PICE];
+
+    PVTABLE pvTable[1];
 
 } BOARD;
 

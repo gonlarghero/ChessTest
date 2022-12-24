@@ -1,9 +1,17 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-
 #include "../Definitions.h"
 
+typedef struct PVENTRY{
+	U64 positionKey;
+	int move;
+} PVENTRY;
+
+typedef struct PVTABLE{
+	PVENTRY *pTable;
+	int numEntries;
+} PVTABLE;
 
 typedef struct MOVE
 {

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 
-int ParseFen(char *fen, BOARD *position){
+int ParseFen(const char *fen, BOARD *position){
 
 	int rank = RANK_8;
 	int file = FILE_A;
@@ -14,6 +14,7 @@ int ParseFen(char *fen, BOARD *position){
 	int square120 = 0;
 
 	ResetBoard(position);
+	InitPVTable(position->pvTable);
 
 	while((rank >= RANK_1) && *fen){
 		count = 1;

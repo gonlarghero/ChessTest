@@ -1,0 +1,12 @@
+#ifndef ENGINE_PVTABLE_H_
+#define ENGINE_PVTABLE_H_
+
+#include "Move.h"
+#include "../Board.h"
+
+extern void InitPVTable(PVTABLE *table);
+extern void ClearPVTable(PVTABLE *table);
+extern int ProbePVTable(const BOARD* position);
+extern void StorePVMove(const BOARD* position, const int move);
+
+#endif

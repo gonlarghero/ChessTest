@@ -78,8 +78,6 @@ void printArrays(){
 void LoadData()
 {
     InitializeSq120To64();
-    if(TESTING_MODE)
-        printArrays();
     InitializeBitMask();
     InitializeHashKeys();
     InitiFilesRanksBoard();

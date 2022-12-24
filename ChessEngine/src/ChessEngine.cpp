@@ -16,7 +16,7 @@ int main(int, char**) {
     StartInterface();
 
     BOARD board[1];
-    MOVELIST list[1];
+    //MOVELIST list[1];
     ParseFen(START_FEN, board);
 
     //PerfTest(3, board);
@@ -32,11 +32,14 @@ int main(int, char**) {
     		break;
     	}else if(input[0] == 't'){
     		TakeMove(board);
-    		continue;
+    	}else if(input[0] == 'p'){
+    		PerfTest(4, board);
     	}else{
     		move = ParseMove(input, board);
     		if(move != NOMOVE){
     			MakeMove(board, move);
+    		}else {
+    			std::cout<<"Move not parsed \n";
     		}
     	}
 
