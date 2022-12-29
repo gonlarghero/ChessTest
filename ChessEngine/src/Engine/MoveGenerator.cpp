@@ -198,6 +198,24 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 	}
 }
 
+bool MoveExists(BOARD *position, const int move){
+
+	MOVELIST list[1];
+	GenerateAllMoves(position,list);
+
+	int moveNum = 0;
+	for(moveNum = 0; moveNum < list->count; ++moveNum){
+		if(!MakeMove(position, list->moves[moveNum].move))
+			continue;
+
+		TakeMove(position);
+
+		if(list->moves[moveNum].move == move)
+			return true;
+	}
+	return false;
+}
+
 static void AddWhitePawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list){
 
 	ASSERT(SquareOnBoard(from));

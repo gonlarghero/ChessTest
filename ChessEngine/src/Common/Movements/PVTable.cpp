@@ -5,6 +5,30 @@
 
 const int PvSize = 0x100000 *2;
 
+
+int GetPVLine(const int depth, BOARD * position){
+
+	ASSERT(depth < MAXDEPTH);
+
+	int move = ProbePVTable(position);
+	int count = 0;
+
+	while(move != NOMOVE && count < depth){
+		if(MoveExists(position, move)){
+			MakeMove(position, move);
+			position->pvArray[count++] = move;
+		}else {
+			break;
+		}
+		move = ProbePVTable(position);
+	}
+
+	while(position->play > 0)
+		TakeMove(position);
+
+	return count;
+}
+
 void InitPVTable(PVTABLE *table){
 
 	table->numEntries = PvSize/ sizeof(PVENTRY);

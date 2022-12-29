@@ -3,6 +3,24 @@
 
 #include "../Definitions.h"
 
+typedef struct SEARCHINFO{
+	int starttime;
+	int stoptime;
+	int depth;
+	int depthset;
+	int timeset;
+	int movestogo;
+	int infinite;
+
+	long nodes;
+
+	bool quit;
+	bool stopped;
+
+	float failHigh;
+	float failHighFirst;
+}SEARCHINFO;
+
 typedef struct PVENTRY{
 	U64 positionKey;
 	int move;

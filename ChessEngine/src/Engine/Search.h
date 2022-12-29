@@ -2,7 +2,10 @@
 #define ENGINE_SEARCH_H_
 
 #include "../Common/Board.h"
+#include "../Common/Movements/Move.h"
+#include "../Common/Movements/PVTable.h"
+#include "Evaluate.h"
 
-extern bool isRepetition(const BOARD *position);
+extern void SearchPosition(BOARD *position, SEARCHINFO *info);
 
 #endif

@@ -43,6 +43,10 @@ typedef struct BOARD
     int pieceList[PIECE_TYPE_NUMBER][MAX_OF_ONE_PICE];
 
     PVTABLE pvTable[1];
+    int pvArray[MAXDEPTH];
+
+    int searchHistory[13][BOARD_SEQUENCE_NUMBER];
+    int searchKillers[2][MAXDEPTH];
 
 } BOARD;
 

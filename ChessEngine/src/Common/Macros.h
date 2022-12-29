@@ -9,5 +9,6 @@
 #define IsRQ(p) (PieceRookQueen[(p)])
 #define IsKn(p) (PieceKnight[(p)])
 #define IsKi(p) (PieceKing[(p)])
+#define MIRROR64(sq) (Mirror64[(sq)])
 
 #endif

@@ -2,6 +2,7 @@
 #define ENGINE_MOVEGENERATOR_H_
 
 #include "../Common/Movements/Move.h"
+#include "../Common/Movements/MakeMove.h"
 #include "../Common/Board.h"
 #include "../Data/BoardValidator.h"
 #include "../Common/Validate.h"
@@ -14,5 +15,6 @@
 
 
 void GenerateAllMoves(const BOARD *position, MOVELIST *list);
+bool MoveExists(BOARD *position, const int move);
 
 #endif

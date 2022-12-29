@@ -7,7 +7,7 @@
 
 #include "Data/Fen.h"
 #include "Common/Board.h"
-#include "Engine/Perft.h"
+#include "Engine/Search.h"
 
 int main(int, char**) {
 
@@ -16,10 +16,9 @@ int main(int, char**) {
     StartInterface();
 
     BOARD board[1];
-    //MOVELIST list[1];
+    SEARCHINFO info[1];
     ParseFen(START_FEN, board);
 
-    //PerfTest(3, board);
     char input[6];
     int move = NOMOVE;
 
@@ -32,8 +31,9 @@ int main(int, char**) {
     		break;
     	}else if(input[0] == 't'){
     		TakeMove(board);
-    	}else if(input[0] == 'p'){
-    		PerfTest(4, board);
+    	}else if(input[0] == 's'){
+    		info->depth = 4;
+    		SearchPosition(board, info);
     	}else{
     		move = ParseMove(input, board);
     		if(move != NOMOVE){
