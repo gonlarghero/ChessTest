@@ -10,7 +10,7 @@ void InitiFilesRanksBoard(){
 	int rank = RANK_1;
 	int square = A1;
 
-	for(index = 0; index < BOARD_SEQUENCE_NUMBER; ++index){
+	for(index = 0; index < BOARD_SQUARE_NUMBER; ++index){
 		FilesBoard[index] = SQUARE_NULL;
 		RanksBoard[index] = SQUARE_NULL;
 	}
@@ -44,7 +44,7 @@ void InitializeSq120To64(){
     int rank = RANK_1;
     int sq = A1;
     int sq64 = 0;
-    for(index = 0; index < BOARD_SEQUENCE_NUMBER; ++index){
+    for(index = 0; index < BOARD_SQUARE_NUMBER; ++index){
         Sq120ToSq64[index] = 65;
     }
     for(index = 0; index < BOARD_REAL_NUMBER; ++index){
@@ -62,7 +62,7 @@ void InitializeSq120To64(){
 
 void printArrays(){
     int index = 0;
-    for(index = 0; index < BOARD_SEQUENCE_NUMBER; ++index){
+    for(index = 0; index < BOARD_SQUARE_NUMBER; ++index){
         if(index%10==0)
             std::cout<<"\n";
         printf("%5d",Sq120ToSq64[index]);

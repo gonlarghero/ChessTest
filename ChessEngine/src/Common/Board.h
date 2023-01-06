@@ -18,7 +18,7 @@ typedef struct UNDO
 
 typedef struct BOARD
 {
-    int pieces [BOARD_SEQUENCE_NUMBER];
+    int pieces [BOARD_SQUARE_NUMBER];
     int Kings [2];
     int side;
     int enPassant;
@@ -45,7 +45,7 @@ typedef struct BOARD
     PVTABLE pvTable[1];
     int pvArray[MAXDEPTH];
 
-    int searchHistory[13][BOARD_SEQUENCE_NUMBER];
+    int searchHistory[PIECE_TYPE_NUMBER][BOARD_SQUARE_NUMBER];
     int searchKillers[2][MAXDEPTH];
 
 } BOARD;

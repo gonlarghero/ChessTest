@@ -64,8 +64,6 @@ int ParseMove(char *ptrChar, BOARD* position){
 	int from = FR2SQ(ptrChar [0] - 'a', ptrChar[1] - '1');
 	int to = FR2SQ(ptrChar [2] - 'a', ptrChar[3] - '1');
 
-	std::cout<<"Move: "<<ptrChar<<" from: "<< from<<" to: "<<to<<"\n";
-
 	ASSERT(SquareOnBoard(from) && SquareOnBoard(to));
 
 	MOVELIST list[1];

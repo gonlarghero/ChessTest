@@ -6,7 +6,7 @@ U64 GeneratePositionKey(const BOARD *position){
 	U64 finalKey =0;
 	int piece = EMPTY;
 
-	for(square = 0; square < BOARD_SEQUENCE_NUMBER; ++square){
+	for(square = 0; square < BOARD_SQUARE_NUMBER; ++square){
 		piece = position->pieces[square];
 		if(square != SQUARE_NULL && piece != EMPTY)
 			finalKey ^= PieceKeys[piece][square];
@@ -29,7 +29,7 @@ void InitializeHashKeys(){
 	int index = 0;
 	int index2 = 0;
 	for(index = 0; index < PIECE_TYPE_NUMBER; ++index){
-		for(index2 = 0; index2 < BOARD_SEQUENCE_NUMBER; ++index2){
+		for(index2 = 0; index2 < BOARD_SQUARE_NUMBER; ++index2){
 			PieceKeys[index][index2] = RAND_64();
 		}
 	}

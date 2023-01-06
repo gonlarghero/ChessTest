@@ -39,7 +39,7 @@ void PrintBoard(const BOARD* position){
 void UpdateListMaterial(BOARD *position){
 
 	int piece, square,index,colour = 0;
-	for(index = 0; index < BOARD_SEQUENCE_NUMBER; ++index){
+	for(index = 0; index < BOARD_SQUARE_NUMBER; ++index){
 		square = index;
 		piece = position->pieces[index];
 		if(piece != SQUARE_NULL && piece != EMPTY){
@@ -77,7 +77,7 @@ void ResetBoard(BOARD *position){
 
 	int index = 0;
 
-	for(index = 0; index < BOARD_SEQUENCE_NUMBER; ++index){
+	for(index = 0; index < BOARD_SQUARE_NUMBER; ++index){
 		position->pieces[index] = SQUARE_NULL;
 	}
 
@@ -110,4 +110,5 @@ void ResetBoard(BOARD *position){
 	position->historyPlay = 0;
 	position->castlePermission = 0;
 	position->positionKey = 0ULL;
+
 }

@@ -1,5 +1,7 @@
 #include "Search.h"
+
 #include <windows.h>
+#include <iostream>
 
 static bool isRepetition(const BOARD *position);
 static void CheckUp(SEARCHINFO *info);
@@ -11,28 +13,28 @@ static int Quiescence(int alpha, int beta, BOARD *position, SEARCHINFO *info);
 void SearchPosition(BOARD *position, SEARCHINFO *info){
 
 	int bestMove = NOMOVE;
-	int bestScore = -INFINITE;
+	int bestScore = -INFINITY;
 	int currentDepth,pvMoves,pvNum = 0;
 
 	ClearForSearch(position,info);
 
-	/*if(EngineOptions->UseBook == TRUE) {
-		bestMove = GetBookMove(pos);
-	}*/
+	//if(EngineOptions->UseBook == TRUE) {
+	//	bestMove = GetBookMove(pos);
+
 
 	if(bestMove == NOMOVE) {
 		for( currentDepth = 1; currentDepth <= info->depth; ++currentDepth ) {
 
 			//rootDepth = currentDepth;
-			bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth, position, info, TRUE);
+			bestScore = AlphaBeta(-INFINITY, INFINITY, currentDepth, position, info, TRUE);
 
-			if(info->stopped == true)
-				break;
+			//if(info->stopped == true)
+			//	break;
 
 			pvMoves = GetPVLine(currentDepth, position);
 			bestMove = position->pvArray[0];
 
-			printf("Depth:%d score:%d move:%s nodes:%ld ",
+			printf("Depth:%d score:%d move:%s nodes:%1d ",
 					currentDepth,bestScore,PrintMove(bestMove),info->nodes);
 
 			pvMoves = GetPVLine(currentDepth, position);
@@ -81,15 +83,15 @@ void SearchPosition(BOARD *position, SEARCHINFO *info){
 }
 
 static void CheckUp(SEARCHINFO *info){
-
+	//check if time up or interrupt from GUI
 }
 
 static void ClearForSearch(BOARD *position, SEARCHINFO *info){
 	int index = 0;
 	int index2 = 0;
 
-	for(index = 0; index < 13; ++index) {
-		for(index2 = 0; index2 < BOARD_SEQUENCE_NUMBER; ++index2) {
+	for(index = 0; index < PIECE_TYPE_NUMBER; ++index) {
+		for(index2 = 0; index2 < BOARD_SQUARE_NUMBER; ++index2) {
 			position->searchHistory[index][index2] = 0;
 		}
 	}
@@ -135,7 +137,7 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 
 	info->nodes++;
 
-	if((isRepetition(position) || position->fiftyMove >= 100) && position->play)
+	if((isRepetition(position) || position->fiftyMove >= 100)/* && position->play*/)
 		return 0;
 
 	if(position->play > MAXDEPTH - 1)
@@ -146,8 +148,8 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 	/*if(InCheck == true)
 		depth++;*/
 
-	int Score = -INFINITE;
-	int PvMove = NOMOVE;
+	int Score = -INFINITY;
+	//int PvMove = NOMOVE;
 
 	/*if( ProbeHashEntry(pos, &PvMove, &Score, alpha, beta, depth) == TRUE ) {
 		pos->HashTable->cut++;
@@ -175,8 +177,8 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 	int Legal = 0;
 	int OldAlpha = alpha;
 	int BestMove = NOMOVE;
-	int BestScore = -INFINITE;
-	Score = -INFINITE;
+	int BestScore = -INFINITY;
+	Score = -INFINITY;
 
 	/*if( PvMove != NOMOVE) {
 		for(MoveNum = 0; MoveNum < list->count; ++MoveNum) {
@@ -200,13 +202,13 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 		Score = -AlphaBeta( -beta, -alpha, depth-1, position, info, TRUE);
 		TakeMove(position);
 
-		if(info->stopped == TRUE) {
-			return 0;
-		}
+		//if(info->stopped == TRUE) {
+		//	return 0;
+		//}
 
-		if(Score > BestScore) {
-			BestScore = Score;
-			BestMove = list->moves[MoveNum].move;
+		//if(Score > BestScore) {
+			//BestScore = Score;
+			//BestMove = list->moves[MoveNum].move;
 			if(Score > alpha) {
 				if(Score >= beta) {
 					if(Legal==1)
@@ -228,17 +230,17 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 					pos->searchHistory[pos->pieces[FROMSQ(BestMove)]][TOSQ(BestMove)] += depth;
 				}*/
 			}
-		}
+		//}
 	}
 
 	if(Legal == 0) {
 		if(InCheck)
-			return -INFINITE + position->play;
+			return -MATE + position->play;
 		 else
 			return 0;
 	}
 
-	ASSERT(alpha>=OldAlpha);
+	//ASSERT(alpha>=OldAlpha);
 
 	if(alpha != OldAlpha){
 		StorePVMove(position, BestMove);

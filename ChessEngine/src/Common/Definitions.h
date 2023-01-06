@@ -1,7 +1,7 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
-#define BOARD_SEQUENCE_NUMBER 120
+#define BOARD_SQUARE_NUMBER 120
 #define BOARD_REAL_NUMBER 64
 #define PIECE_TYPE_NUMBER 13
 #define COLOUR_NUMBER 3
@@ -11,9 +11,11 @@
 #define CASTLE_BITS 16
 #define MAXDEPTH 64
 #define NOMOVE 0
+#define INFINITY 30000
+#define MATE 29000
 
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-#define TEST_FEN "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"
+#define TEST_FEN "2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - -"
 
 
 typedef unsigned long long U64;

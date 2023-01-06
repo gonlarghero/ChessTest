@@ -2,8 +2,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
-const int PvSize = 0x100000 *2;
+const int PvSize = 0x100000 * 2;
 
 
 int GetPVLine(const int depth, BOARD * position){
@@ -14,12 +15,15 @@ int GetPVLine(const int depth, BOARD * position){
 	int count = 0;
 
 	while(move != NOMOVE && count < depth){
+
+		ASSERT(count < MAXDEPTH);
+
 		if(MoveExists(position, move)){
 			MakeMove(position, move);
 			position->pvArray[count++] = move;
-		}else {
+		}else
 			break;
-		}
+
 		move = ProbePVTable(position);
 	}
 
@@ -37,13 +41,14 @@ void InitPVTable(PVTABLE *table){
 	free(table->pTable);
 	table->pTable = (PVENTRY *) malloc(table->numEntries * sizeof(PVENTRY));
 	ClearPVTable(table);
+	std::cout<<"PvTable init complete with "<<table->numEntries<<" entries\n";
 }
 
 
 void ClearPVTable(PVTABLE *table){
 
 	PVENTRY *pvEntry;
-	for(pvEntry = table->pTable; pvEntry< table->pTable + table->numEntries; pvEntry++){
+	for(pvEntry = table->pTable; pvEntry < table->pTable + table->numEntries; pvEntry++){
 		pvEntry->positionKey = 0ULL;
 		pvEntry->move = NOMOVE;
 	}
@@ -52,6 +57,7 @@ void ClearPVTable(PVTABLE *table){
 void StorePVMove(const BOARD* position, const int move){
 
 	int index = position->positionKey % position->pvTable->numEntries;
+
 	ASSERT(index >= 0 && index <= position->pvTable->numEntries -1);
 
 	position->pvTable->pTable[index].move = move;
@@ -62,6 +68,7 @@ void StorePVMove(const BOARD* position, const int move){
 int ProbePVTable(const BOARD* position){
 
 	int index = position->positionKey % position->pvTable->numEntries;
+
 	ASSERT(index >= 0 && index <= position->pvTable->numEntries -1);
 
 	if(position->pvTable->pTable[index].positionKey == position->positionKey){

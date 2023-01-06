@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-extern int Sq120ToSq64[BOARD_SEQUENCE_NUMBER];
+extern int Sq120ToSq64[BOARD_SQUARE_NUMBER];
 extern int Sq64ToSq120[BOARD_REAL_NUMBER];
 extern U64 SetMask[BOARD_REAL_NUMBER];
 extern U64 ClearMask[BOARD_REAL_NUMBER];
-extern U64 PieceKeys[PIECE_TYPE_NUMBER][BOARD_SEQUENCE_NUMBER];
+extern U64 PieceKeys[PIECE_TYPE_NUMBER][BOARD_SQUARE_NUMBER];
 extern U64 SideKey;
 extern U64 CastleKeys[CASTLE_BITS];
 extern char PieceChar[];
@@ -21,15 +21,23 @@ extern int PieceMajor[PIECE_TYPE_NUMBER];
 extern int PieceMinor[PIECE_TYPE_NUMBER];
 extern int PieceValue[PIECE_TYPE_NUMBER];
 extern int PieceColour[PIECE_TYPE_NUMBER];
-extern int FilesBoard[BOARD_SEQUENCE_NUMBER];
-extern int RanksBoard[BOARD_SEQUENCE_NUMBER];
+extern int FilesBoard[BOARD_SQUARE_NUMBER];
+extern int RanksBoard[BOARD_SQUARE_NUMBER];
 extern int PieceKnight[PIECE_TYPE_NUMBER];
 extern int PieceKing[PIECE_TYPE_NUMBER];
 extern int PieceRookQueen[PIECE_TYPE_NUMBER];
 extern int PieceBishopQueen[PIECE_TYPE_NUMBER];
 extern int PieceSlides[PIECE_TYPE_NUMBER];
 extern int PiecePawn[PIECE_TYPE_NUMBER];
+
+//piecesquaretables
 extern int Mirror64[BOARD_REAL_NUMBER];
+extern int PawnTable[BOARD_REAL_NUMBER];
+extern int KnightTable[BOARD_REAL_NUMBER];
+extern int BishopTable[BOARD_REAL_NUMBER];
+extern int RookTable[BOARD_REAL_NUMBER];
+extern int KingE[BOARD_REAL_NUMBER];
+extern int KingO[BOARD_REAL_NUMBER];
 //Generates 64 bit random in blocks of 15
 U64 RAND_64();
 
