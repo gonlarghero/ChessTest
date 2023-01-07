@@ -29,6 +29,7 @@ extern int PieceRookQueen[PIECE_TYPE_NUMBER];
 extern int PieceBishopQueen[PIECE_TYPE_NUMBER];
 extern int PieceSlides[PIECE_TYPE_NUMBER];
 extern int PiecePawn[PIECE_TYPE_NUMBER];
+extern int VictimScore[PIECE_TYPE_NUMBER];
 
 //piecesquaretables
 extern int Mirror64[BOARD_REAL_NUMBER];
@@ -38,6 +39,7 @@ extern int BishopTable[BOARD_REAL_NUMBER];
 extern int RookTable[BOARD_REAL_NUMBER];
 extern int KingE[BOARD_REAL_NUMBER];
 extern int KingO[BOARD_REAL_NUMBER];
+
 //Generates 64 bit random in blocks of 15
 U64 RAND_64();
 

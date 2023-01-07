@@ -16,5 +16,6 @@
 
 void GenerateAllMoves(const BOARD *position, MOVELIST *list);
 bool MoveExists(BOARD *position, const int move);
+void InitMvvLva();
 
 #endif

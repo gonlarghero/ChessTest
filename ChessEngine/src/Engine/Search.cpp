@@ -8,7 +8,7 @@ static void CheckUp(SEARCHINFO *info);
 static void ClearForSearch(BOARD *position, SEARCHINFO *info);
 static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO *info, bool doNull);
 static int Quiescence(int alpha, int beta, BOARD *position, SEARCHINFO *info);
-
+static void PickNextMove(int moveNum, MOVELIST* lists);
 
 void SearchPosition(BOARD *position, SEARCHINFO *info){
 
@@ -192,7 +192,8 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 
 	for(MoveNum = 0; MoveNum < list->count; ++MoveNum) {
 
-		//PickNextMove(MoveNum, list);
+		//TODO: cambar por lista ordenada post generacion
+		PickNextMove(MoveNum, list);
 
 		if (!MakeMove(position,list->moves[MoveNum].move))  {
 			continue;
@@ -257,6 +258,23 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 
 static int Quiescence(int alpha, int beta, BOARD *position, SEARCHINFO *info){
 	return 0;
+}
+
+static void PickNextMove(int moveNum, MOVELIST* list){
+	MOVE temp;
+	int index, bestScore = 0;
+	int bestNum = moveNum;
+
+	for(index = moveNum; index< list->count; ++index){
+		if(list->moves[index].score >bestScore){
+			bestScore = list->moves[index].score;
+			bestNum = index;
+		}
+	}
+
+	temp = list->moves[moveNum];
+	list->moves[moveNum] = list->moves[bestNum];
+	list->moves[bestNum] = temp;
 }
 
 static bool isRepetition(const BOARD *position){

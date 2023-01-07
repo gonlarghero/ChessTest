@@ -9,6 +9,8 @@ static void AddWhitePawnMove(const BOARD *position, const int from, const int to
 static void AddWhitePawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list);
 static void AddBlackPawnMove(const BOARD *position, const int from, const int to, MOVELIST * list);
 static void AddBlackPawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list);
+static int MvvLvaScores[PIECE_TYPE_NUMBER][PIECE_TYPE_NUMBER];
+
 
 const int LoopSlidePiece[8] = {
 	wB, wR, wQ, 0, bB, bR, bQ, 0
@@ -216,6 +218,15 @@ bool MoveExists(BOARD *position, const int move){
 	return false;
 }
 
+void InitMvvLva(){
+	int Attacker,Victim = 0;
+	for(Victim = wP; Victim <= bK; ++Victim){
+		for(Attacker = wP; Attacker <= bK; ++Attacker){
+			MvvLvaScores[Victim][Attacker] = VictimScore[Victim] + 6 - (VictimScore[Attacker]/100);
+		}
+	}
+}
+
 static void AddWhitePawnCapMove(const BOARD *position, const int from, const int to, const int cap, MOVELIST * list){
 
 	ASSERT(SquareOnBoard(from));
@@ -302,7 +313,7 @@ static void AddCaptureMove(const BOARD *position, int move, MOVELIST *list){
 	ASSERT(CheckBoard(position));
 
 	list->moves[list->count].move = move;
-	list->moves[list->count].score = 0;
+	list->moves[list->count].score = MvvLvaScores[CAPTURED(move)][position->pieces[FROMSQ(move)]];
 	list->count++;
 }
 
@@ -315,7 +326,7 @@ static void AddEnPassantMove(const BOARD *position, int move, MOVELIST *list){
 			(RanksBoard[TOSQ(move)] == RANK_3 && position->side == BLACK));
 
 	list->moves[list->count].move = move;
-	list->moves[list->count].score = 0;
+	list->moves[list->count].score = 105;
 	list->count++;
 }
 

@@ -46,7 +46,7 @@ int main(int, char**) {
     		}
     		std::cout<<"\n";
     	}else if(input[0] == 's'){
-    		info->depth = 4;
+    		info->depth = 5;
     		SearchPosition(board, info);
     	}else{
     		move = ParseMove(input, board);
@@ -61,5 +61,6 @@ int main(int, char**) {
     	fflush(stdin);
     }
 
+    free(board->pvTable->pTable);
     return 0;
 }
