@@ -28,8 +28,8 @@ void SearchPosition(BOARD *position, SEARCHINFO *info){
 			//rootDepth = currentDepth;
 			bestScore = AlphaBeta(-INFINITY, INFINITY, currentDepth, position, info, TRUE);
 
-			//if(info->stopped == true)
-			//	break;
+			if(info->stopped == true)
+				break;
 
 			pvMoves = GetPVLine(currentDepth, position);
 			bestMove = position->pvArray[0];
@@ -83,7 +83,8 @@ void SearchPosition(BOARD *position, SEARCHINFO *info){
 }
 
 static void CheckUp(SEARCHINFO *info){
-	//check if time up or interrupt from GUI
+	if(info->timeset == true && GetTickCount() > info->stoptime)
+		info->stopped = true;
 }
 
 static void ClearForSearch(BOARD *position, SEARCHINFO *info){
@@ -123,17 +124,12 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 	//ASSERT(beta>alpha);
 	//ASSERT(depth>=0);
 
-	if(depth <= 0){
-		info->nodes++;
-		return EvalPosition(position);
-	}
 
-	/*if(depth <= 0)
+	if(depth <= 0)
 		return Quiescence(alpha, beta, position, info);
 
-	if(( info->nodes & 2047 ) == 0)
+	if((info->nodes & 2047) == 0)
 		CheckUp(info);
-		*/
 
 	info->nodes++;
 
@@ -149,7 +145,7 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 		depth++;*/
 
 	int Score = -INFINITY;
-	//int PvMove = NOMOVE;
+	int PvMove = ProbePVTable(position);/*NOMOVE;*/
 
 	/*if( ProbeHashEntry(pos, &PvMove, &Score, alpha, beta, depth) == TRUE ) {
 		pos->HashTable->cut++;
@@ -180,15 +176,14 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 	int BestScore = -INFINITY;
 	Score = -INFINITY;
 
-	/*if( PvMove != NOMOVE) {
+	if(PvMove != NOMOVE) {
 		for(MoveNum = 0; MoveNum < list->count; ++MoveNum) {
-			if( list->moves[MoveNum].move == PvMove) {
+			if(list->moves[MoveNum].move == PvMove) {
 				list->moves[MoveNum].score = 2000000;
-				//printf("Pv move found \n");
 				break;
 			}
 		}
-	}*/
+	}
 
 	for(MoveNum = 0; MoveNum < list->count; ++MoveNum) {
 
@@ -203,9 +198,9 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 		Score = -AlphaBeta( -beta, -alpha, depth-1, position, info, TRUE);
 		TakeMove(position);
 
-		//if(info->stopped == TRUE) {
-		//	return 0;
-		//}
+		if(info->stopped == TRUE)
+			return 0;
+
 
 		//if(Score > BestScore) {
 			//BestScore = Score;
@@ -216,20 +211,20 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 						info->failHighFirst++;
 					info->failHigh++;
 
-					/*if(!(list->moves[MoveNum].move & MFLAGCAP)) {
+					if(!(list->moves[MoveNum].move & MFLAGCAP)) {
 						position->searchKillers[1][position->play] = position->searchKillers[0][position->play];
 						position->searchKillers[0][position->play] = list->moves[MoveNum].move;
 					}
 
-					StoreHashEntry(pos, BestMove, beta, HFBETA, depth);
+					/*StoreHashEntry(pos, BestMove, beta, HFBETA, depth);
 					*/
 					return beta;
 				}
 				alpha = Score;
 				BestMove = list->moves[MoveNum].move;
-				/*if(!(list->moves[MoveNum].move & MFLAGCAP)) {
-					pos->searchHistory[pos->pieces[FROMSQ(BestMove)]][TOSQ(BestMove)] += depth;
-				}*/
+				if(!(list->moves[MoveNum].move & MFLAGCAP)) {
+					position->searchHistory[position->pieces[FROMSQ(BestMove)]][TOSQ(BestMove)] += depth;
+				}
 			}
 		//}
 	}
@@ -256,8 +251,81 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 	return alpha;
 }
 
+//Todo: simplificar quiescence con alfa beta
 static int Quiescence(int alpha, int beta, BOARD *position, SEARCHINFO *info){
-	return 0;
+	ASSERT(CheckBoard(position));
+
+	if((info->nodes & 2047) == 0)
+		CheckUp(info);
+
+	info->nodes++;
+
+	if(isRepetition(position) || position->fiftyMove >= 100)
+		return 0;
+
+	if(position->play > MAXDEPTH -1)
+		return EvalPosition(position);
+
+	int Score = EvalPosition(position);
+
+	if(Score >= beta)
+		return beta;
+
+	if(Score >= alpha)
+		alpha = Score;
+
+	MOVELIST list[1];
+	GenerateAllCaptures(position, list);
+
+	int MoveNum = 0;
+	int Legal = 0;
+	int OldAlpha = alpha;
+	int BestMove = NOMOVE;
+	int BestScore = -INFINITY;
+	Score = -INFINITY;
+	int PvMove = ProbePVTable(position);
+
+	if(PvMove != NOMOVE) {
+		for(MoveNum = 0; MoveNum < list->count; ++MoveNum) {
+			if(list->moves[MoveNum].move == PvMove) {
+				list->moves[MoveNum].score = 2000000;
+				break;
+			}
+		}
+	}
+
+	for(MoveNum = 0; MoveNum < list->count; ++MoveNum) {
+
+		//TODO: cambar por lista ordenada post generacion
+		PickNextMove(MoveNum, list);
+
+		if (!MakeMove(position,list->moves[MoveNum].move))  {
+			continue;
+		}
+
+		Legal++;
+		Score = -Quiescence( -beta, -alpha, position, info);
+		TakeMove(position);
+
+		if(info->stopped == TRUE)
+			return 0;
+
+		if(Score > alpha) {
+			if(Score >= beta) {
+				if(Legal==1)
+					info->failHighFirst++;
+				info->failHigh++;
+				return beta;
+			}
+			alpha = Score;
+			BestMove = list->moves[MoveNum].move;
+		}
+	}
+
+	if(alpha != OldAlpha)
+		StorePVMove(position, BestMove);
+
+	return alpha;
 }
 
 static void PickNextMove(int moveNum, MOVELIST* list){

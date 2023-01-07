@@ -44,7 +44,7 @@ extern int KingO[BOARD_REAL_NUMBER];
 U64 RAND_64();
 
 //MUGRE PARA PODER DEBUGGEAR //TODO sacar este codigo asqueroso
-#define DEBUG
+//#define DEBUG
 #ifndef DEBUG
 #define ASSERT(n)
 #else

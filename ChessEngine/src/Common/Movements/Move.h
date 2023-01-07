@@ -4,11 +4,13 @@
 #include "../Definitions.h"
 
 typedef struct SEARCHINFO{
+	bool timeset;
 	int starttime;
 	int stoptime;
+
+	bool depthset;
 	int depth;
-	int depthset;
-	int timeset;
+
 	int movestogo;
 	int infinite;
 

@@ -200,6 +200,118 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list){
 	}
 }
 
+//TODO: funcion copiada y pegada
+void GenerateAllCaptures(const BOARD *position, MOVELIST *list){
+
+	ASSERT(CheckBoard(position));
+
+	list->count = 0;
+
+	int piece = EMPTY;
+	int side = position->side;
+	int dir,index,pieceIndex,square, t_square, pieceNumber = 0;
+
+	bool emptyRoad,safeRoad;
+
+	if(side == WHITE){
+		//pawns
+		for(pieceNumber = 0; pieceNumber < position->pieceNumber[wP]; ++pieceNumber){
+			square = position->pieceList[wP][pieceNumber];
+			ASSERT(SquareOnBoard(square));
+
+			if(!SQUAREOFFBOARD(square + 9) && PieceColour[position->pieces[square + 9]] == BLACK)
+				AddWhitePawnCapMove(position, square, square + 9, position->pieces[square + 9], list);
+			if(!SQUAREOFFBOARD(square + 11) && PieceColour[position->pieces[square + 11]] == BLACK)
+				AddWhitePawnCapMove(position, square, square + 11, position->pieces[square + 11], list);
+
+			if(position->enPassant != SQUARE_NULL){
+				if(square + 9 == position->enPassant)
+					AddEnPassantMove(position,MOVE_M(square,(square + 9), EMPTY,EMPTY,MFLAGEP),list);
+				if(square + 11 == position->enPassant)
+					AddEnPassantMove(position,MOVE_M(square,(square + 11), EMPTY,EMPTY,MFLAGEP),list);
+			}
+
+		}
+	}else{
+		//pawns
+		for(pieceNumber = 0; pieceNumber < position->pieceNumber[bP]; ++pieceNumber){
+			square = position->pieceList[bP][pieceNumber];
+			ASSERT(SquareOnBoard(square));
+
+			if(!SQUAREOFFBOARD(square - 9) && PieceColour[position->pieces[square - 9]] == WHITE)
+				AddBlackPawnCapMove(position, square, square - 9, position->pieces[square - 9], list);
+			if(!SQUAREOFFBOARD(square - 11) && PieceColour[position->pieces[square - 11]] == WHITE)
+				AddBlackPawnCapMove(position, square, square - 11, position->pieces[square - 11], list);
+
+			if(position->enPassant != SQUARE_NULL){
+				if(square - 9 == position->enPassant)
+					AddEnPassantMove(position,MOVE_M(square,(square - 9), EMPTY,EMPTY,MFLAGEP),list);
+				if(square - 11 == position->enPassant)
+					AddEnPassantMove(position,MOVE_M(square,(square - 11), EMPTY,EMPTY,MFLAGEP),list);
+			}
+		}
+	}
+
+	//sliders
+	pieceIndex = LoopSlideIndex[side];
+	piece =  LoopSlidePiece[pieceIndex++];
+	while(piece != 0){
+		ASSERT(PieceValid(piece));
+
+		for(pieceNumber = 0; pieceNumber < position->pieceNumber[piece]; ++pieceNumber){
+			square = position->pieceList[piece][pieceNumber];
+			ASSERT(SquareOnBoard(square));
+
+			for(index = 0; index < DirectionNumber[piece]; ++index){
+				dir = PieceDirection[piece][index];
+				t_square = square + dir;
+
+				while(!SQUAREOFFBOARD(t_square)){
+					if(position->pieces[t_square] != EMPTY){
+						if(PieceColour[position->pieces[t_square]] == (side ^ 1)){
+							AddCaptureMove(position, MOVE_M(square,t_square,position->pieces[t_square],EMPTY,0), list);
+						}
+						break;
+					}
+					t_square +=dir;
+				}
+			}
+		}
+
+		piece = LoopSlidePiece[pieceIndex++];
+	}
+
+	//non-sliders
+	pieceIndex = LoopNonSlideIndex[side];
+	piece =  LoopNonSlidePiece[pieceIndex++];
+	while(piece != 0){
+		ASSERT(PieceValid(piece));
+
+		for(pieceNumber = 0; pieceNumber < position->pieceNumber[piece]; ++pieceNumber){
+			square = position->pieceList[piece][pieceNumber];
+			ASSERT(SquareOnBoard(square));
+
+			for(index = 0; index < DirectionNumber[piece]; ++index){
+				dir = PieceDirection[piece][index];
+				t_square = square + dir;
+
+				if(SQUAREOFFBOARD(t_square)){
+					continue;
+				}
+
+				if(position->pieces[t_square] != EMPTY){
+					if(PieceColour[position->pieces[t_square]] == (side ^ 1)){
+						AddCaptureMove(position, MOVE_M(square,t_square,position->pieces[t_square],EMPTY,0), list);
+					}
+					continue;
+				}
+			}
+		}
+
+		piece = LoopNonSlidePiece[pieceIndex++];
+	}
+}
+
 bool MoveExists(BOARD *position, const int move){
 
 	MOVELIST list[1];
@@ -300,8 +412,15 @@ static void AddQuietMove(const BOARD *position, int move, MOVELIST *list){
 	ASSERT(CheckBoard(position));
 	ASSERT(position->play >=0 && position->play < MAXDEPTH);
 
+	if(position->searchKillers[0][position->play] == move){
+		list->moves[list->count].score = 900000;
+	}else if(position->searchKillers[1][position->play] == move){
+		list->moves[list->count].score = 800000;
+	}else{
+		list->moves[list->count].score = position->searchHistory[position->pieces[FROMSQ(move)]][TOSQ(move)];
+	}
+
 	list->moves[list->count].move = move;
-	list->moves[list->count].score = 0;
 	list->count++;
 }
 
@@ -313,7 +432,7 @@ static void AddCaptureMove(const BOARD *position, int move, MOVELIST *list){
 	ASSERT(CheckBoard(position));
 
 	list->moves[list->count].move = move;
-	list->moves[list->count].score = MvvLvaScores[CAPTURED(move)][position->pieces[FROMSQ(move)]];
+	list->moves[list->count].score = MvvLvaScores[CAPTURED(move)][position->pieces[FROMSQ(move)]] + 1000000;
 	list->count++;
 }
 
@@ -326,7 +445,7 @@ static void AddEnPassantMove(const BOARD *position, int move, MOVELIST *list){
 			(RanksBoard[TOSQ(move)] == RANK_3 && position->side == BLACK));
 
 	list->moves[list->count].move = move;
-	list->moves[list->count].score = 105;
+	list->moves[list->count].score = 105 + 1000000;
 	list->count++;
 }
 
