@@ -2,8 +2,8 @@
 #define GLOBAL_H
 
 #include "Definitions.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 extern int Sq120ToSq64[BOARD_SQUARE_NUMBER];
 extern int Sq64ToSq120[BOARD_REAL_NUMBER];
@@ -48,16 +48,16 @@ U64 RAND_64();
 #ifndef DEBUG
 #define ASSERT(n)
 #else
-#define ASSERT(n)                          \
-	if (!(n))                              \
-	{                                      \
-		printf("%s - Failed: ", #n);       \
-		printf("On %s ", __DATE__);        \
-		printf("At %s ", __TIME__);        \
-		printf("In File %s ", __FILE__);   \
-		printf("At Line %d\n ", __LINE__); \
-		exit(1);                           \
-	}
+#include <iostream>
+#define ASSERT(n)                                                                                                      \
+    if (!(n)) {                                                                                                        \
+        std::cout << #n << " - Failed: ";                                                                              \
+        std::cout << "On " << __DATE__ << " ";                                                                         \
+        std::cout << "At " << __TIME__ << " ";                                                                         \
+        std::cout << "In File " << __FILE__ << " ";                                                                    \
+        std::cout << "At Line " << __LINE__ << std::endl;                                                              \
+        exit(1);                                                                                                       \
+    }
 #endif
 
 #endif

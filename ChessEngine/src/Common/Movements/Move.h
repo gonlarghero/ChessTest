@@ -3,45 +3,44 @@
 
 #include "../Definitions.h"
 
-typedef struct SEARCHINFO{
-	bool timeset;
-	int starttime;
-	int stoptime;
+typedef struct SEARCHINFO {
+    bool timeset;
+    int starttime;
+    int stoptime;
 
-	bool depthset;
-	int depth;
+    bool depthset;
+    int depth;
 
-	int movestogo;
-	int infinite;
+    int movestogo;
+    int infinite;
 
-	long nodes;
+    long nodes;
 
-	bool quit;
-	bool stopped;
+    bool quit;
+    bool stopped;
 
-	float failHigh;
-	float failHighFirst;
-}SEARCHINFO;
+    float failHigh;
+    float failHighFirst;
+} SEARCHINFO;
 
-typedef struct PVENTRY{
-	U64 positionKey;
-	int move;
+typedef struct PVENTRY {
+    U64 positionKey;
+    int move;
 } PVENTRY;
 
-typedef struct PVTABLE{
-	PVENTRY *pTable;
-	int numEntries;
+typedef struct PVTABLE {
+    PVENTRY *pTable;
+    int numEntries;
 } PVTABLE;
 
-typedef struct MOVE
-{
-	int move;
-	int score;
+typedef struct MOVE {
+    int move;
+    int score;
 } MOVE;
 
-typedef struct MOVELIST{
-	MOVE moves[MAX_POSITION_MOVES];
-	int count;
+typedef struct MOVELIST {
+    MOVE moves[MAX_POSITION_MOVES];
+    int count;
 } MOVELIST;
 
 /*
@@ -55,9 +54,9 @@ typedef struct MOVELIST{
 */
 
 #define FROMSQ(m) ((m) & 0x7F)
-#define TOSQ(m) (((m)>>7) & 0x7F)
-#define CAPTURED(m) (((m)>>14) & 0xF)
-#define PROMOTED(m) (((m)>>20) & 0xF)
+#define TOSQ(m) (((m) >> 7) & 0x7F)
+#define CAPTURED(m) (((m) >> 14) & 0xF)
+#define PROMOTED(m) (((m) >> 20) & 0xF)
 
 #define MFLAGEP 0x40000
 #define MFLAGPS 0x80000
