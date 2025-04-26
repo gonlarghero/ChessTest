@@ -31,7 +31,7 @@ extern int PieceSlides[PIECE_TYPE_NUMBER];
 extern int PiecePawn[PIECE_TYPE_NUMBER];
 extern int VictimScore[PIECE_TYPE_NUMBER];
 
-//piecesquaretables
+// piecesquaretables
 extern int Mirror64[BOARD_REAL_NUMBER];
 extern int PawnTable[BOARD_REAL_NUMBER];
 extern int KnightTable[BOARD_REAL_NUMBER];
@@ -40,22 +40,24 @@ extern int RookTable[BOARD_REAL_NUMBER];
 extern int KingE[BOARD_REAL_NUMBER];
 extern int KingO[BOARD_REAL_NUMBER];
 
-//Generates 64 bit random in blocks of 15
+// Generates 64 bit random in blocks of 15
 U64 RAND_64();
 
-//MUGRE PARA PODER DEBUGGEAR //TODO sacar este codigo asqueroso
-//#define DEBUG
+// MUGRE PARA PODER DEBUGGEAR //TODO sacar este codigo asqueroso
+#define DEBUG
 #ifndef DEBUG
 #define ASSERT(n)
 #else
-#define ASSERT(n)\
-	if(!(n)){ \
-		printf("%s - Failed: ", #n);\
-		printf("On %s ", __DATE__);\
-		printf("At %s ", __TIME__);\
-		printf("In File %s ", __FILE__);\
-		printf("At Line %d\n ", __LINE__);\
-		exit(1);}
+#define ASSERT(n)                          \
+	if (!(n))                              \
+	{                                      \
+		printf("%s - Failed: ", #n);       \
+		printf("On %s ", __DATE__);        \
+		printf("At %s ", __TIME__);        \
+		printf("In File %s ", __FILE__);   \
+		printf("At Line %d\n ", __LINE__); \
+		exit(1);                           \
+	}
 #endif
 
 #endif
