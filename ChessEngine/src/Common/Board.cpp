@@ -52,9 +52,9 @@ void UpdateListMaterial(BOARD *position) {
             position->pieceNumber[piece]++;
 
             if (piece == wK)
-                position->Kings[colour] = square;
+                position->Kings[WHITE] = square;
             if (piece == bK)
-                position->Kings[colour] = square;
+                position->Kings[BLACK] = square;
 
             if (piece == wP) {
                 SETBIT(position->pawns[WHITE], Sq120ToSq64[square]);

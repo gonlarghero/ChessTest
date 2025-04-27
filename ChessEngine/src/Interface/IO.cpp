@@ -13,7 +13,6 @@ std::string PrintSquare(const int square) {
 }
 
 std::string PrintMove(const int move) {
-
     int ff = FilesBoard[FROMSQ(move)];
     int rf = RanksBoard[FROMSQ(move)];
     int ft = FilesBoard[TOSQ(move)];
@@ -36,7 +35,6 @@ std::string PrintMove(const int move) {
         }
         ss << pchar;
     }
-
     return ss.str();
 }
 

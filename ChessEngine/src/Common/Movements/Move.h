@@ -43,15 +43,7 @@ typedef struct MOVELIST {
     int count;
 } MOVELIST;
 
-/*
-0000 0000 0000 0000 0000 0111 1111 0x7F      -> from
-0000 0000 0000 0011 1111 1000 0000 >>7,0x7F  -> to
-0000 0000 0011 1100 0000 0000 0000 >>14,0x7F -> captured
-0000 0000 0100 0000 0000 0000 0000 0x400000  -> ep
-0000 0000 1000 0000 0000 0000 0000 0x800000  -> pawn start
-0000 1111 0000 0000 0000 0000 0000 >>20 0xF  -> promoted
-0001 0000 0000 0000 0000 0000 0000 0x1000000 -> castle
-*/
+// details in docs/Move.md
 
 #define FROMSQ(m) ((m) & 0x7F)
 #define TOSQ(m) (((m) >> 7) & 0x7F)

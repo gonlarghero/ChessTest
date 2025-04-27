@@ -8,7 +8,7 @@ U64 GeneratePositionKey(const BOARD *position) {
 
     for (square = 0; square < BOARD_SQUARE_NUMBER; ++square) {
         piece = position->pieces[square];
-        if (square != SQUARE_NULL && piece != EMPTY)
+        if (piece != SQUARE_NULL && piece != EMPTY)
             finalKey ^= PieceKeys[piece][square];
     }
 
@@ -20,7 +20,6 @@ U64 GeneratePositionKey(const BOARD *position) {
         finalKey ^= PieceKeys[EMPTY][position->enPassant];
 
     finalKey ^= CastleKeys[position->castlePermission];
-
     return finalKey;
 }
 

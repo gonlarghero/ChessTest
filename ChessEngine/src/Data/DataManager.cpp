@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdio.h>
 
-void InitiFilesRanksBoard() {
+void InitFilesRanksBoard() {
     int index = 0;
     int file = FILE_A;
     int rank = RANK_1;
@@ -79,5 +79,5 @@ void LoadData() {
     InitializeSq120To64();
     InitializeBitMask();
     InitializeHashKeys();
-    InitiFilesRanksBoard();
+    InitFilesRanksBoard();
 }
