@@ -10,10 +10,13 @@ static void AddEnPassantMove(const BOARD *position, int move, MOVELIST *list);
 
 static int MvvLvaScores[PIECE_TYPE_NUMBER][PIECE_TYPE_NUMBER];
 
+// helpers to loop through pieces
 const int LoopSlidePiece[8] = {wB, wR, wQ, 0, bB, bR, bQ, 0};
 const int LoopNonSlidePiece[8] = {wN, wK, 0, bN, bK, 0};
 const int LoopSlideIndex[2] = {0, 4};
 const int LoopNonSlideIndex[2] = {0, 3};
+
+// helpers for piece movement
 const int PieceDirection[13][8] = {{0},
                                    {0},
                                    {-8, -19, -21, -12, 8, 19, 21, 12},
@@ -27,12 +30,11 @@ const int PieceDirection[13][8] = {{0},
                                    {-1, -10, 1, 10, 0, 0, 0, 0},
                                    {-1, -10, 1, 10, -9, -11, 11, 9},
                                    {-1, -10, 1, 10, -9, -11, 11, 9}};
+const int DirectionNumber[13] = {0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8};
 
 const int PawnForward[2] = {10, -10};
 const int PawnLeftCapture[2] = {9, -11};
 const int PawnRightCapture[2] = {11, -9};
-
-const int DirectionNumber[13] = {0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8};
 
 void InitMvvLva() {
     for (int Victim = wP; Victim <= bK; ++Victim) {
@@ -80,6 +82,7 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list) {
         }
     }
 
+    // castling
     if (side == WHITE) {
         if (position->castlePermission & wKCastle)
             AddCastleMove(position, E1, G1, list);
@@ -103,12 +106,15 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list) {
                     t_square = square + dir;
                     while (!SQUAREOFFBOARD(t_square)) {
                         int target = position->pieces[t_square];
+                        // capture
                         if (target != EMPTY) {
                             if (PieceColour[target] == (side ^ 1))
                                 AddMove(position, MOVE_M(square, t_square, target, EMPTY, 0), list, true);
                             break;
                         }
+                        // non-capture
                         AddMove(position, MOVE_M(square, t_square, EMPTY, EMPTY, 0), list, false);
+                        // break loop for non sliders
                         if (IsKi(piece) || IsKn(piece))
                             break;
                         t_square += dir;
@@ -130,6 +136,7 @@ void GenerateAllCaptures(const BOARD *position, MOVELIST *list) {
     int side = position->side;
     int dir, index, square, t_square;
 
+    // pawns
     int pawnPiece = (side == WHITE) ? wP : bP;
     int leftCap = PawnLeftCapture[side];
     int rightCap = PawnRightCapture[side];
