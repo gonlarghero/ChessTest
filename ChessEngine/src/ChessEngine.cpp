@@ -18,7 +18,11 @@ int main(int, char **) {
 
     BOARD board[1];
     SEARCHINFO info[1];
-    ParseFen(START_FEN, board);
+    int fenret = ParseFen(START_FEN, board);
+
+    if (fenret != 0) {
+        return -1;
+    }
 
     char input[6];
     int move = NOMOVE;

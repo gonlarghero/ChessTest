@@ -74,7 +74,7 @@ int ParseFen(const char *fen, BOARD *position) {
             fen++;
             continue;
         default:
-            std::cout << "FEN error \n";
+            std::cout << "FEN error: " << *fen << "\n";
             return -1;
         }
 

@@ -41,7 +41,7 @@ int PieceBishopQueen[PIECE_TYPE_NUMBER] = {false, false, false, true,  false, tr
 int PieceSlides[PIECE_TYPE_NUMBER] = {false, false, false, true, true, true, false,
                                       false, false, true,  true, true, false};
 int PiecePawn[PIECE_TYPE_NUMBER] = {false, true,  false, false, false, false, false,
-                                    true,  false, true,  true,  true,  false};
+                                    true,  false, false, false, false, false};
 int VictimScore[PIECE_TYPE_NUMBER] = {0, 100, 200, 300, 400, 500, 600, 100, 200, 300, 400, 500, 600};
 
 int Mirror64[BOARD_REAL_NUMBER] = {56, 57, 58, 59, 60, 61, 62, 63, 48, 49, 50, 51, 52, 53, 54, 55,
