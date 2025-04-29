@@ -40,7 +40,7 @@ int main(int, char **) {
         } else if (input[0] == 't') {
             TakeMove(board);
         } else if (input[0] == 'p') {
-            PerfTest(4, board);
+            PerfTest(5, board);
         } else if (input[0] == 'r') {
             max = GetPVLine(4, board);
             std::cout << "PvLine of " << max << " moves: ";

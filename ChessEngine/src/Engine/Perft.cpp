@@ -1,64 +1,62 @@
 #include "Perft.h"
 
-#include <iostream>
+#include <chrono>
 #include <iomanip>
+#include <iostream>
 #include <windows.h>
 
-long leafNodes;
+void Perft(int depth, BOARD *position, long &leafNodes) {
 
-void Perft(int depth,BOARD *position, int parent){
+    ASSERT(CheckBoard(position));
 
-	ASSERT(CheckBoard(position));
+    if (depth == 0) {
+        leafNodes++;
+        return;
+    }
 
-	if(depth == 0){
-		leafNodes++;
-		return;
-	}
+    MOVELIST list[1];
+    GenerateAllMoves(position, list);
+    int moveNum = 0;
+    for (moveNum = 0; moveNum < list->count; ++moveNum) {
+        if (!MakeMove(position, list->moves[moveNum].move)) {
+            continue;
+        }
 
-	MOVELIST list[1];
-	GenerateAllMoves(position, list);
-	int moveNum = 0;
-	for(moveNum = 0; moveNum < list->count; ++moveNum){
-		if(!MakeMove(position, list->moves[moveNum].move)){
-			continue;
-		}
-
-		Perft(depth-1,position,list->moves[moveNum].move);
-		TakeMove(position);
-	}
-
-	return;
+        Perft(depth - 1, position, leafNodes);
+        TakeMove(position);
+    }
 }
 
-void PerfTest(int depth, BOARD *position){
+void PerfTest(int depth, BOARD *position) {
 
-	ASSERT(CheckBoard(position));
+    ASSERT(CheckBoard(position));
 
-	PrintBoard(position);
+    PrintBoard(position);
 
-	std::cout<<"\nSTARTING TEST TO DEPTH: "<< depth<<"\n";
+    std::cout << "\nSTARTING TEST TO DEPTH: " << depth << "\n";
 
-	leafNodes = 0;
+    long leafNodes = 0;
 
-	int start = GetTickCount();
+    auto start = std::chrono::high_resolution_clock::now();
 
-	MOVELIST list[1];
-	GenerateAllMoves(position, list);
+    MOVELIST list[1];
+    GenerateAllMoves(position, list);
 
-	int move;
-	int moveNum = 0;
-	for(moveNum = 0; moveNum < list->count; ++moveNum){
-		move = list->moves[moveNum].move;
-		if(!MakeMove(position, move)){
-			continue;
-		}
-		long cumnodes = leafNodes;
-		Perft(depth-1,position,move);
-		TakeMove(position);
-		long oldnodes = leafNodes - cumnodes;
-		std::cout<<"MOVE: "<<moveNum+1<<" : "<<PrintMove(move)<<" : "<<oldnodes<<"\n";
-	}
-	std::cout<<std::setprecision(6)<<"TEST COMPLETE: "<<leafNodes<<" VISITED IN "<<GetTickCount()- start<<" MILISECONDS.\n";
-	return;
+    for (int moveNum = 0; moveNum < list->count; ++moveNum) {
+        int move = list->moves[moveNum].move;
+        if (!MakeMove(position, move)) {
+            continue;
+        }
+        long cumnodes = leafNodes;
+        Perft(depth - 1, position, leafNodes);
+        TakeMove(position);
+        long oldnodes = leafNodes - cumnodes;
+        std::cout << "MOVE: " << moveNum + 1 << " : " << PrintMove(move) << " : " << oldnodes << "\n";
+    }
 
+    auto end = std::chrono::high_resolution_clock::now();
+    auto durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+    std::cout << std::setprecision(6) << "TEST COMPLETE: " << leafNodes << " NODES VISITED IN " << durationMs
+              << " MILLISECONDS.\n";
 }
