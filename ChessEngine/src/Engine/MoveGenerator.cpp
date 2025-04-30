@@ -66,7 +66,8 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list) {
             AddPawnMove(position, square, square + forward, EMPTY, list, false, side == WHITE);
             if ((side == WHITE && RanksBoard[square] == RANK_2) || (side == BLACK && RanksBoard[square] == RANK_7))
                 if (position->pieces[square + dblForward] == EMPTY)
-                    AddMove(position, MOVE_M(square, (square + dblForward), EMPTY, EMPTY, MFLAGPS), list, false);
+                    AddMove(position, MOVE_M(square, (square + dblForward), EMPTY, EMPTY, Move::FlagPawnStart), list,
+                            false);
         }
 
         // captures
@@ -77,7 +78,7 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list) {
                 if (captured != EMPTY && PieceColour[captured] == (side ^ 1))
                     AddPawnMove(position, square, t_square, captured, list, true, side == WHITE);
                 else if (t_square == position->enPassant)
-                    AddEnPassantMove(position, MOVE_M(square, t_square, EMPTY, EMPTY, MFLAGEP), list);
+                    AddEnPassantMove(position, MOVE_M(square, t_square, EMPTY, EMPTY, Move::FlagEnPassant), list);
             }
         }
     }
@@ -151,7 +152,7 @@ void GenerateAllCaptures(const BOARD *position, MOVELIST *list) {
                 if (captured != EMPTY && PieceColour[captured] == (side ^ 1))
                     AddPawnMove(position, square, t_square, captured, list, true, side == WHITE);
                 else if (t_square == position->enPassant)
-                    AddEnPassantMove(position, MOVE_M(square, t_square, EMPTY, EMPTY, MFLAGEP), list);
+                    AddEnPassantMove(position, MOVE_M(square, t_square, EMPTY, EMPTY, Move::FlagEnPassant), list);
             }
         }
     }
@@ -217,21 +218,22 @@ static void AddPawnMove(const BOARD *position, int from, int to, int cap, MOVELI
 }
 
 static void AddMove(const BOARD *position, int move, MOVELIST *list, bool capture) {
-    ASSERT(SquareOnBoard(FROMSQ(move)));
-    ASSERT(SquareOnBoard(TOSQ(move)));
+    ASSERT(SquareOnBoard(Move::From(move)));
+    ASSERT(SquareOnBoard(Move::To(move)));
     ASSERT(position->play >= 0 && position->play < MAXDEPTH);
 
     if (capture) {
-        ASSERT(PieceValid(CAPTURED(move)));
-        list->moves[list->count].score = MvvLvaScores[CAPTURED(move)][position->pieces[FROMSQ(move)]] + 1000000;
+        ASSERT(PieceValid(Move::Captured(move)));
+        list->moves[list->count].score =
+            MvvLvaScores[Move::Captured(move)][position->pieces[Move::From(move)]] + 1000000;
     } else {
-        int fromPiece = position->pieces[FROMSQ(move)];
+        int fromPiece = position->pieces[Move::From(move)];
         if (position->searchKillers[0][position->play] == move)
             list->moves[list->count].score = 900000;
         else if (position->searchKillers[1][position->play] == move)
             list->moves[list->count].score = 800000;
         else
-            list->moves[list->count].score = position->searchHistory[fromPiece][TOSQ(move)];
+            list->moves[list->count].score = position->searchHistory[fromPiece][Move::To(move)];
     }
 
     list->moves[list->count].move = move;
@@ -239,11 +241,11 @@ static void AddMove(const BOARD *position, int move, MOVELIST *list, bool captur
 }
 
 static void AddEnPassantMove(const BOARD *position, int move, MOVELIST *list) {
-    ASSERT(SquareOnBoard(FROMSQ(move)));
-    ASSERT(SquareOnBoard(TOSQ(move)));
+    ASSERT(SquareOnBoard(Move::From(move)));
+    ASSERT(SquareOnBoard(Move::To(move)));
     ASSERT(CheckBoard(position));
-    ASSERT((RanksBoard[TOSQ(move)] == RANK_6 && position->side == WHITE) ||
-           (RanksBoard[TOSQ(move)] == RANK_3 && position->side == BLACK));
+    ASSERT((RanksBoard[Move::To(move)] == RANK_6 && position->side == WHITE) ||
+           (RanksBoard[Move::To(move)] == RANK_3 && position->side == BLACK));
 
     list->moves[list->count].move = move;
     list->moves[list->count].score = 105 + 1000000;
@@ -268,6 +270,6 @@ static void AddCastleMove(const BOARD *position, int from, int to, MOVELIST *lis
     }
 
     if (emptyRoad && safeRoad) {
-        AddMove(position, MOVE_M(from, to, EMPTY, EMPTY, MFLAGCA), list, false);
+        AddMove(position, MOVE_M(from, to, EMPTY, EMPTY, Move::FlagCastle), list, false);
     }
 }

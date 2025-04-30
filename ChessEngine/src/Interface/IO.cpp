@@ -13,12 +13,12 @@ std::string PrintSquare(const int square) {
 }
 
 std::string PrintMove(const int move) {
-    int ff = FilesBoard[FROMSQ(move)];
-    int rf = RanksBoard[FROMSQ(move)];
-    int ft = FilesBoard[TOSQ(move)];
-    int rt = RanksBoard[TOSQ(move)];
+    int ff = FilesBoard[Move::From(move)];
+    int rf = RanksBoard[Move::From(move)];
+    int ft = FilesBoard[Move::To(move)];
+    int rt = RanksBoard[Move::To(move)];
 
-    int promoted = PROMOTED(move);
+    int promoted = Move::Promoted(move);
 
     std::stringstream ss;
     ss << static_cast<char>('a' + ff) << static_cast<char>('1' + rf) << static_cast<char>('a' + ft)
@@ -73,8 +73,8 @@ int ParseMove(char *ptrChar, BOARD *position) {
 
     for (moveNum = 0; moveNum < list->count; ++moveNum) {
         move = list->moves[moveNum].move;
-        if (FROMSQ(move) == from && TOSQ(move) == to) {
-            promotionPiece = PROMOTED(move);
+        if (Move::From(move) == from && Move::To(move) == to) {
+            promotionPiece = Move::Promoted(move);
             if (promotionPiece != EMPTY) {
                 if (IsRQ(promotionPiece) && !IsBQ(promotionPiece) && ptrChar[4] == 'r')
                     return move;

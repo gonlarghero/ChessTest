@@ -17,35 +17,32 @@ Each move is packed into a 32-bit integer using specific bit fields for differen
 | 20–23        | `0xF << 20`     | Promoted piece (0–15)|
 | 24           | `0x1000000`     | Castling flag      |
 
-## Example from Code
 
-0000 0000 0000 0000 0000 0111 1111 -> Hexa: 0x7F      -> from
-0000 0000 0000 0011 1111 1000 0000 -> Hexa: >>7,0x7F  -> to
-0000 0000 0011 1100 0000 0000 0000 -> Hexa: >>14,0x7F -> captured
-0000 0000 0100 0000 0000 0000 0000 -> Hexa: 0x400000  -> ep
-0000 0000 1000 0000 0000 0000 0000 -> Hexa: 0x800000  -> pawn start
-0000 1111 0000 0000 0000 0000 0000 -> Hexa: >>20 0xF  -> promoted
-0001 0000 0000 0000 0000 0000 0000 -> Hexa: 0x1000000 -> castle
+## Visual Example
 
+| Field       | Binary Value                         | Hex Value     | Notes                      |
+|-------------|--------------------------------------|---------------|----------------------------|
+| From        | `0000 0000 0000 0000 0000 0111 1111` | `0x0000007F`  | Use `Move::From(move)`     |
+| To          | `0000 0000 0000 0011 1111 1000 0000` | `0x00003F80`  | Use `Move::To(move)`       |
+| Captured    | `0000 0000 0011 1100 0000 0000 0000` | `0x0003C000`  | Use `Move::Captured(move)` |
+| En Passant  | `0000 0000 0100 0000 0000 0000 0000` | `0x00040000`  | Use `Move::FlagEnPassant`  |
+| Pawn Start  | `0000 0000 1000 0000 0000 0000 0000` | `0x00080000`  | Use `Move::FlagPawnStart`  |
+| Promoted    | `0000 1111 0000 0000 0000 0000 0000` | `0x00F00000`  | Use `Move::Promoted(move)` |
+| Castling    | `0001 0000 0000 0000 0000 0000 0000` | `0x01000000`  | Use `Move::FlagCastle`     |
 
-## Macros for Extraction
+## Move Accessors (`Move.h`)
 
-To extract information from a move integer, the following macros are used:
+These `constexpr` functions extract information from a move integer cleanly:
 
 ```cpp
-#define FROMSQ(m)    ((m) & 0x7F)
-#define TOSQ(m)      (((m) >> 7) & 0x7F)
-#define CAPTURED(m)  (((m) >> 14) & 0xF)
-#define PROMOTED(m)  (((m) >> 20) & 0xF)
-```
+namespace Move {
 
-## Flags
+constexpr int From(int move)       { return move & 0x7F; }
+constexpr int To(int move)         { return (move >> 7) & 0x7F; }
+constexpr int Captured(int move)   { return (move >> 14) & 0xF; }
+constexpr int Promoted(int move)   { return (move >> 20) & 0xF; }
 
-- **MFLAGEP (`0x40000`)**: Set if the move is an en passant capture.
-- **MFLAGPS (`0x80000`)**: Set if the move is a pawn's initial two-square advance.
-- **MFLAGCA (`0x1000000`)**: Set if the move is a castling move.
-- **MFLAGCAP (`0x7C000`)**: Set if the move is a capture (there's a piece at captured).
-- **MFLAGPROM (`0xF00000`)** Set if the move is a promotion (promotion piece without from/to).
+}
 
 ## Summary
 

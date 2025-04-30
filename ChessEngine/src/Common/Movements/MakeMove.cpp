@@ -123,8 +123,8 @@ bool MakeMove(BOARD *position, int move) {
 
     ASSERT(CheckBoard(position));
 
-    int from = FROMSQ(move);
-    int to = TOSQ(move);
+    int from = Move::From(move);
+    int to = Move::To(move);
     int side = position->side;
 
     ASSERT(SquareOnBoard(from));
@@ -136,12 +136,12 @@ bool MakeMove(BOARD *position, int move) {
 
     position->history[position->historyPlay].positionKey = position->positionKey;
 
-    if (move & MFLAGEP) {
+    if (move & Move::FlagEnPassant) {
         if (side == WHITE)
             ClearPiece(to - 10, position);
         else
             ClearPiece(to + 10, position);
-    } else if (move & MFLAGCA) {
+    } else if (move & Move::FlagCastle) {
         switch (to) {
         case C1:
             MovePiece(A1, D1, position);
@@ -175,7 +175,7 @@ bool MakeMove(BOARD *position, int move) {
     position->enPassant = SQUARE_NULL;
     Hash::Castle(position);
 
-    int captured = CAPTURED(move);
+    int captured = Move::Captured(move);
     position->fiftyMove++;
 
     if (captured != EMPTY) {
@@ -192,7 +192,7 @@ bool MakeMove(BOARD *position, int move) {
 
     if (PiecePawn[position->pieces[from]]) {
         position->fiftyMove = 0;
-        if (move & MFLAGPS) {
+        if (move & Move::FlagPawnStart) {
             if (side == WHITE) {
                 position->enPassant = from + 10;
                 ASSERT(RanksBoard[position->enPassant] == RANK_3);
@@ -206,7 +206,7 @@ bool MakeMove(BOARD *position, int move) {
 
     MovePiece(from, to, position);
 
-    int promotedPiece = PROMOTED(move);
+    int promotedPiece = Move::Promoted(move);
     if (promotedPiece != EMPTY) {
         ASSERT(PieceValid(promotedPiece) && !PiecePawn[promotedPiece]);
         ClearPiece(to, position);
@@ -241,8 +241,8 @@ void TakeMove(BOARD *position) {
     ASSERT(position->play >= 0 && position->play < MAXDEPTH);
 
     int move = position->history[position->historyPlay].move;
-    int from = FROMSQ(move);
-    int to = TOSQ(move);
+    int from = Move::From(move);
+    int to = Move::To(move);
 
     ASSERT(SquareOnBoard(from));
     ASSERT(SquareOnBoard(to));
@@ -262,12 +262,12 @@ void TakeMove(BOARD *position) {
     position->side ^= 1;
     Hash::Side(position);
 
-    if (MFLAGEP & move) {
+    if (Move::FlagEnPassant & move) {
         if (position->side == WHITE)
             AddPiece(to - 10, position, bP);
         else
             AddPiece(to + 10, position, wP);
-    } else if (MFLAGCA & move) {
+    } else if (Move::FlagCastle & move) {
         switch (to) {
         case C1:
             MovePiece(D1, A1, position);
@@ -293,13 +293,13 @@ void TakeMove(BOARD *position) {
         position->Kings[position->side] = from;
     }
 
-    int captured = CAPTURED(move);
+    int captured = Move::Captured(move);
     if (captured != EMPTY) {
         ASSERT(PieceValid(captured));
         AddPiece(to, position, captured);
     }
 
-    int promotedPiece = PROMOTED(move);
+    int promotedPiece = Move::Promoted(move);
     if (promotedPiece != EMPTY) {
         ASSERT(PieceValid(promotedPiece) && !PiecePawn[promotedPiece]);
         ClearPiece(from, position);

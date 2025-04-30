@@ -45,16 +45,20 @@ typedef struct MOVELIST {
 
 // details in docs/Move.md
 
-#define FROMSQ(m) ((m) & 0x7F)
-#define TOSQ(m) (((m) >> 7) & 0x7F)
-#define CAPTURED(m) (((m) >> 14) & 0xF)
-#define PROMOTED(m) (((m) >> 20) & 0xF)
+namespace Move {
 
-#define MFLAGEP 0x40000
-#define MFLAGPS 0x80000
-#define MFLAGCA 0x1000000
+constexpr int From(int move) { return move & 0x7F; }
+constexpr int To(int move) { return (move >> 7) & 0x7F; }
+constexpr int Captured(int move) { return (move >> 14) & 0xF; }
+constexpr int Promoted(int move) { return (move >> 20) & 0xF; }
 
-#define MFLAGCAP 0x7C000
-#define MFLAGPROM 0xF00000
+constexpr int FlagEnPassant = 0x40000;
+constexpr int FlagPawnStart = 0x80000;
+constexpr int FlagCastle = 0x1000000;
+
+constexpr int FlagCapture = 0x7C000;
+constexpr int FlagPromote = 0xF00000;
+
+} // namespace Move
 
 #endif

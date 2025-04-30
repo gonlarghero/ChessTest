@@ -106,22 +106,22 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
     if (doNull && depth >= 3 && !InCheck && position->material[position->side] > 0) {
         int oldEnPassant = position->enPassant;
         if (position->enPassant != SQUARE_NULL) {
-            position->positionKey ^= PieceKeys[EMPTY][position->enPassant];
+            Hash::Piece(position, EMPTY, position->enPassant);
         }
         position->enPassant = SQUARE_NULL;
 
         position->side ^= 1;
-        position->positionKey ^= SideKey;
+        Hash::Side(position);
         position->play++;
 
         int score = -AlphaBeta(-beta, -beta + 1, depth - 1 - 2, position, info, FALSE);
 
         position->play--;
         position->side ^= 1;
-        position->positionKey ^= SideKey;
+        Hash::Side(position);
 
         if (oldEnPassant != SQUARE_NULL) {
-            position->positionKey ^= PieceKeys[EMPTY][oldEnPassant];
+            Hash::Piece(position, EMPTY, oldEnPassant);
         }
         position->enPassant = oldEnPassant;
 
@@ -170,7 +170,7 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
                     info->failHighFirst++;
                 info->failHigh++;
 
-                if (!(list->moves[MoveNum].move & MFLAGCAP)) {
+                if (!(list->moves[MoveNum].move & Move::FlagCastle)) {
                     position->searchKillers[1][position->play] = position->searchKillers[0][position->play];
                     position->searchKillers[0][position->play] = list->moves[MoveNum].move;
                 }
@@ -178,8 +178,8 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
             }
             alpha = Score;
             BestMove = list->moves[MoveNum].move;
-            if (!(list->moves[MoveNum].move & MFLAGCAP)) {
-                position->searchHistory[position->pieces[FROMSQ(BestMove)]][TOSQ(BestMove)] += depth;
+            if (!(list->moves[MoveNum].move & Move::FlagCastle)) {
+                position->searchHistory[position->pieces[Move::From(BestMove)]][Move::To(BestMove)] += depth;
             }
         }
     }
