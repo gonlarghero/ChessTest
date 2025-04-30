@@ -1,5 +1,5 @@
-#ifndef MOVE_H
-#define MOVE_H
+#ifndef COMMON_MOVEMENTSMOVE_H
+#define COMMON_MOVEMENTSMOVE_H
 
 #include "../Definitions.h"
 

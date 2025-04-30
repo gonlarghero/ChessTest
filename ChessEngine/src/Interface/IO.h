@@ -1,5 +1,5 @@
-#ifndef IO_H
-#define IO_H
+#ifndef INTERFACE_IO_H
+#define INTERFACE_IO_H
 
 #include "../Common/Board.h"
 #include "../Common/Definitions.h"

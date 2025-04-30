@@ -1,5 +1,5 @@
-#ifndef COMMON_VALIDATE_H_
-#define COMMON_VALIDATE_H_
+#ifndef COMMON_VALIDATE_H
+#define COMMON_VALIDATE_H
 
 #include "Definitions.h"
 #include "Global.h"
@@ -10,5 +10,4 @@ extern bool FileRankValide(const int fr);
 extern bool PieceValidEmpty(const int piece);
 extern bool PieceValid(const int piece);
 
-
-#endif /* COMMON_VALIDATE_H_ */
+#endif

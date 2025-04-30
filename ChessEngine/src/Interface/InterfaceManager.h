@@ -1,9 +1,8 @@
-#ifndef InterfaceMjr_H
-#define InterfaceMjr_H
+#ifndef INTERFACE_INTERFACEMANAGER_H
+#define INTERFACE_INTERFACEMANAGER_H
 
 #include "IO.h"
 
-/// @brief Starts the chess Interface
 void StartInterface();
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef GLOBAL_H
-#define GLOBAL_H
+#ifndef COMMON_GLOBAL_H
+#define COMMON_GLOBAL_H
 
 #include "Definitions.h"
 #include <stdio.h>

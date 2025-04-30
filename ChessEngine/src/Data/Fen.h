@@ -1,8 +1,8 @@
-#ifndef FEN_H
-#define FEN_H
+#ifndef DATA_FEN_H
+#define DATA_FEN_H
 
-#include "HashKeys.h"
 #include "../Common/Movements/PVTable.h"
+#include "HashKeys.h"
 
 extern int ParseFen(const char *fen, BOARD *position);
 
