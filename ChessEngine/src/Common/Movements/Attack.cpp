@@ -31,11 +31,11 @@ bool SqAttacked(const int square, const int side, const BOARD *position) {
     for (index = 0; index < 8; ++index) {
         // knights
         piece = position->pieces[square + KnDir[index]];
-        if (piece != SQUARE_NULL && IsKn(piece) && PieceColour[piece] == side)
+        if (piece != SQUARE_NULL && Global::IsKnight(piece) && PieceColour[piece] == side)
             return true;
         // kings
         piece = position->pieces[square + KiDir[index]];
-        if (piece != SQUARE_NULL && IsKi(piece) && PieceColour[piece] == side)
+        if (piece != SQUARE_NULL && Global::IsKing(piece) && PieceColour[piece] == side)
             return true;
     }
 
@@ -46,7 +46,7 @@ bool SqAttacked(const int square, const int side, const BOARD *position) {
         piece = position->pieces[t_square];
         while (piece != SQUARE_NULL) {
             if (piece != EMPTY) {
-                if (IsRQ(piece) && PieceColour[piece] == side) {
+                if (Global::IsRookQueen(piece) && PieceColour[piece] == side) {
                     return true;
                 }
                 break;
@@ -60,7 +60,7 @@ bool SqAttacked(const int square, const int side, const BOARD *position) {
         piece = position->pieces[t_square];
         while (piece != SQUARE_NULL) {
             if (piece != EMPTY) {
-                if (IsBQ(piece) && PieceColour[piece] == side) {
+                if (Global::IsBishopQueen(piece) && PieceColour[piece] == side) {
                     return true;
                 }
                 break;

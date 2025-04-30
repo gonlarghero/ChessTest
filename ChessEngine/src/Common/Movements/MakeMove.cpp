@@ -40,8 +40,8 @@ static void ClearPiece(const int square, BOARD *position) {
         else
             position->minorPieces[colour]--;
     } else {
-        CLEARBIT(position->pawns[colour], Sq120ToSq64[square]);
-        CLEARBIT(position->pawns[BOTH], Sq120ToSq64[square]);
+        Global::ClearBit(position->pawns[colour], Sq120ToSq64[square]);
+        Global::ClearBit(position->pawns[BOTH], Sq120ToSq64[square]);
     }
 
     // Details at docs/ClearPiece.md
@@ -78,8 +78,8 @@ static void AddPiece(const int square, BOARD *position, int piece) {
         else
             position->minorPieces[colour]++;
     } else {
-        SETBIT(position->pawns[colour], Sq120ToSq64[square]);
-        SETBIT(position->pawns[BOTH], Sq120ToSq64[square]);
+        Global::SetBit(position->pawns[colour], Sq120ToSq64[square]);
+        Global::SetBit(position->pawns[BOTH], Sq120ToSq64[square]);
     }
 
     position->material[colour] += PieceValue[piece];
@@ -105,10 +105,10 @@ static void MovePiece(const int from, const int to, BOARD *position) {
     position->pieces[to] = piece;
 
     if (!PieceBig[piece]) {
-        CLEARBIT(position->pawns[colour], Sq120ToSq64[from]);
-        CLEARBIT(position->pawns[BOTH], Sq120ToSq64[from]);
-        SETBIT(position->pawns[colour], Sq120ToSq64[to]);
-        SETBIT(position->pawns[BOTH], Sq120ToSq64[to]);
+        Global::ClearBit(position->pawns[colour], Sq120ToSq64[from]);
+        Global::ClearBit(position->pawns[BOTH], Sq120ToSq64[from]);
+        Global::SetBit(position->pawns[colour], Sq120ToSq64[to]);
+        Global::SetBit(position->pawns[BOTH], Sq120ToSq64[to]);
     }
 
     for (index = 0; index < position->pieceNumber[piece]; ++index) {

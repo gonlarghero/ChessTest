@@ -116,7 +116,7 @@ int ParseFen(const char *fen, BOARD *position) {
         file = fen[0] - 'a';
         rank = fen[1] - '1';
 
-        position->enPassant = FR2SQ(file, rank);
+        position->enPassant = Global::FrToSq(file, rank);
     }
 
     position->positionKey = GeneratePositionKey(position);

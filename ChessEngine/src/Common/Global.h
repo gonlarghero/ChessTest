@@ -40,6 +40,26 @@ extern int RookTable[BOARD_REAL_NUMBER];
 extern int KingE[BOARD_REAL_NUMBER];
 extern int KingO[BOARD_REAL_NUMBER];
 
+namespace Global {
+
+constexpr int FrToSq(int file, int rank) { return 21 + file + rank * 10; }
+
+inline void SetBit(U64 &bb, int square) { bb |= SetMask[square]; }
+
+inline void ClearBit(U64 &bb, int square) { bb &= ClearMask[square]; }
+
+inline bool IsBishopQueen(int piece) { return PieceBishopQueen[piece]; }
+
+inline bool IsRookQueen(int piece) { return PieceRookQueen[piece]; }
+
+inline bool IsKnight(int piece) { return PieceKnight[piece]; }
+
+inline bool IsKing(int piece) { return PieceKing[piece]; }
+
+inline int Mirror64(int square) { return ::Mirror64[square]; }
+
+} // namespace Global
+
 // Generates 64 bit random in blocks of 15
 U64 RAND_64();
 

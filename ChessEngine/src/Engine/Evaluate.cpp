@@ -23,8 +23,8 @@ int EvalPosition(const BOARD *position) {
     for (pieceNum = 0; pieceNum < position->pieceNumber[piece]; ++pieceNum) {
         square = position->pieceList[piece][pieceNum];
         ASSERT(SquareOnBoard(square));
-        ASSERT(MIRROR64(Sq120ToSq64[square]) >= 0 && MIRROR64(Sq120ToSq64[square]) <= 63);
-        score -= PawnTable[MIRROR64(Sq120ToSq64[square])];
+        ASSERT(Global::Mirror64(Sq120ToSq64[square]) >= 0 && Global::Mirror64(Sq120ToSq64[square]) <= 63);
+        score -= PawnTable[Global::Mirror64(Sq120ToSq64[square])];
     }
 
     piece = wN;
@@ -39,8 +39,8 @@ int EvalPosition(const BOARD *position) {
     for (pieceNum = 0; pieceNum < position->pieceNumber[piece]; ++pieceNum) {
         square = position->pieceList[piece][pieceNum];
         ASSERT(SquareOnBoard(square));
-        ASSERT(MIRROR64(Sq120ToSq64[square]) >= 0 && MIRROR64(Sq120ToSq64[square]) <= 63);
-        score -= KnightTable[MIRROR64(Sq120ToSq64[square])];
+        ASSERT(Global::Mirror64(Sq120ToSq64[square]) >= 0 && Global::Mirror64(Sq120ToSq64[square]) <= 63);
+        score -= KnightTable[Global::Mirror64(Sq120ToSq64[square])];
     }
 
     piece = wB;
@@ -55,8 +55,8 @@ int EvalPosition(const BOARD *position) {
     for (pieceNum = 0; pieceNum < position->pieceNumber[piece]; ++pieceNum) {
         square = position->pieceList[piece][pieceNum];
         ASSERT(SquareOnBoard(square));
-        ASSERT(MIRROR64(Sq120ToSq64[square]) >= 0 && MIRROR64(Sq120ToSq64[square]) <= 63);
-        score -= BishopTable[MIRROR64(Sq120ToSq64[square])];
+        ASSERT(Global::Mirror64(Sq120ToSq64[square]) >= 0 && Global::Mirror64(Sq120ToSq64[square]) <= 63);
+        score -= BishopTable[Global::Mirror64(Sq120ToSq64[square])];
     }
 
     piece = wR;
@@ -71,8 +71,9 @@ int EvalPosition(const BOARD *position) {
     for (pieceNum = 0; pieceNum < position->pieceNumber[piece]; ++pieceNum) {
         square = position->pieceList[piece][pieceNum];
         ASSERT(SquareOnBoard(square));
-        ASSERT(MIRROR64(Sq120ToSq64[square]) >= 0 && MIRROR64(Sq120ToSq64[square]) <= BOARD_REAL_NUMBER - 1);
-        score -= RookTable[MIRROR64(Sq120ToSq64[square])];
+        ASSERT(Global::Mirror64(Sq120ToSq64[square]) >= 0 &&
+               Global::Mirror64(Sq120ToSq64[square]) <= BOARD_REAL_NUMBER - 1);
+        score -= RookTable[Global::Mirror64(Sq120ToSq64[square])];
     }
     if (position->side == WHITE)
         return score;

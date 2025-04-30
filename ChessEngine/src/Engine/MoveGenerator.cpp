@@ -7,6 +7,7 @@ static void AddMove(const BOARD *position, int move, MOVELIST *list, bool captur
 static void AddPawnMove(const BOARD *position, int from, int to, int cap, MOVELIST *list, bool capture, bool isWhite);
 static void AddCastleMove(const BOARD *position, int from, int to, MOVELIST *list);
 static void AddEnPassantMove(const BOARD *position, int move, MOVELIST *list);
+static inline int MakeMove(int from, int to, int captured, int promoted, int flags);
 
 static int MvvLvaScores[PIECE_TYPE_NUMBER][PIECE_TYPE_NUMBER];
 
@@ -66,19 +67,19 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list) {
             AddPawnMove(position, square, square + forward, EMPTY, list, false, side == WHITE);
             if ((side == WHITE && RanksBoard[square] == RANK_2) || (side == BLACK && RanksBoard[square] == RANK_7))
                 if (position->pieces[square + dblForward] == EMPTY)
-                    AddMove(position, MOVE_M(square, (square + dblForward), EMPTY, EMPTY, Move::FlagPawnStart), list,
+                    AddMove(position, MakeMove(square, (square + dblForward), EMPTY, EMPTY, Move::FlagPawnStart), list,
                             false);
         }
 
         // captures
         for (int capOffset : {leftCapture, rightCapture}) {
             t_square = square + capOffset;
-            if (!SQUAREOFFBOARD(t_square)) {
+            if (!Board::SquareOffBoard(t_square)) {
                 int captured = position->pieces[t_square];
                 if (captured != EMPTY && PieceColour[captured] == (side ^ 1))
                     AddPawnMove(position, square, t_square, captured, list, true, side == WHITE);
                 else if (t_square == position->enPassant)
-                    AddEnPassantMove(position, MOVE_M(square, t_square, EMPTY, EMPTY, Move::FlagEnPassant), list);
+                    AddEnPassantMove(position, MakeMove(square, t_square, EMPTY, EMPTY, Move::FlagEnPassant), list);
             }
         }
     }
@@ -105,18 +106,18 @@ void GenerateAllMoves(const BOARD *position, MOVELIST *list) {
                 for (index = 0; index < DirectionNumber[piece]; ++index) {
                     dir = PieceDirection[piece][index];
                     t_square = square + dir;
-                    while (!SQUAREOFFBOARD(t_square)) {
+                    while (!Board::SquareOffBoard(t_square)) {
                         int target = position->pieces[t_square];
                         // capture
                         if (target != EMPTY) {
                             if (PieceColour[target] == (side ^ 1))
-                                AddMove(position, MOVE_M(square, t_square, target, EMPTY, 0), list, true);
+                                AddMove(position, MakeMove(square, t_square, target, EMPTY, 0), list, true);
                             break;
                         }
                         // non-capture
-                        AddMove(position, MOVE_M(square, t_square, EMPTY, EMPTY, 0), list, false);
+                        AddMove(position, MakeMove(square, t_square, EMPTY, EMPTY, 0), list, false);
                         // break loop for non sliders
-                        if (IsKi(piece) || IsKn(piece))
+                        if (Global::IsKing(piece) || Global::IsKnight(piece))
                             break;
                         t_square += dir;
                     }
@@ -147,12 +148,12 @@ void GenerateAllCaptures(const BOARD *position, MOVELIST *list) {
 
         for (int capOffset : {leftCap, rightCap}) {
             t_square = square + capOffset;
-            if (!SQUAREOFFBOARD(t_square)) {
+            if (!Board::SquareOffBoard(t_square)) {
                 int captured = position->pieces[t_square];
                 if (captured != EMPTY && PieceColour[captured] == (side ^ 1))
                     AddPawnMove(position, square, t_square, captured, list, true, side == WHITE);
                 else if (t_square == position->enPassant)
-                    AddEnPassantMove(position, MOVE_M(square, t_square, EMPTY, EMPTY, Move::FlagEnPassant), list);
+                    AddEnPassantMove(position, MakeMove(square, t_square, EMPTY, EMPTY, Move::FlagEnPassant), list);
             }
         }
     }
@@ -165,14 +166,14 @@ void GenerateAllCaptures(const BOARD *position, MOVELIST *list) {
                 for (index = 0; index < DirectionNumber[piece]; ++index) {
                     dir = PieceDirection[piece][index];
                     t_square = square + dir;
-                    while (!SQUAREOFFBOARD(t_square)) {
+                    while (!Board::SquareOffBoard(t_square)) {
                         int target = position->pieces[t_square];
                         if (target != EMPTY) {
                             if (PieceColour[target] == (side ^ 1))
-                                AddMove(position, MOVE_M(square, t_square, target, EMPTY, 0), list, true);
+                                AddMove(position, MakeMove(square, t_square, target, EMPTY, 0), list, true);
                             break;
                         }
-                        if (IsKi(piece) || IsKn(piece))
+                        if (Global::IsKing(piece) || Global::IsKnight(piece))
                             break;
                         t_square += dir;
                     }
@@ -211,9 +212,9 @@ static void AddPawnMove(const BOARD *position, int from, int to, int cap, MOVELI
 
     if ((isWhite && RanksBoard[from] == RANK_7) || (!isWhite && RanksBoard[from] == RANK_2)) {
         int promos[] = {isWhite ? wQ : bQ, isWhite ? wR : bR, isWhite ? wB : bB, isWhite ? wN : bN};
-        for (int promo : promos) AddMove(position, MOVE_M(from, to, cap, promo, 0), list, capture);
+        for (int promo : promos) AddMove(position, MakeMove(from, to, cap, promo, 0), list, capture);
     } else {
-        AddMove(position, MOVE_M(from, to, cap, EMPTY, 0), list, capture);
+        AddMove(position, MakeMove(from, to, cap, EMPTY, 0), list, capture);
     }
 }
 
@@ -270,6 +271,10 @@ static void AddCastleMove(const BOARD *position, int from, int to, MOVELIST *lis
     }
 
     if (emptyRoad && safeRoad) {
-        AddMove(position, MOVE_M(from, to, EMPTY, EMPTY, Move::FlagCastle), list, false);
+        AddMove(position, MakeMove(from, to, EMPTY, EMPTY, Move::FlagCastle), list, false);
     }
+}
+
+static inline int MakeMove(int from, int to, int captured, int promoted, int flags) {
+    return from | (to << 7) | (captured << 14) | (promoted << 20) | flags;
 }

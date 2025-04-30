@@ -11,7 +11,7 @@ void PrintBoard(const BOARD *position) {
     for (rank = RANK_8; rank >= RANK_1; rank--) {
         std::cout << (rank + 1) << " ";
         for (file = FILE_A; file <= FILE_H; file++) {
-            square = FR2SQ(file, rank);
+            square = Global::FrToSq(file, rank);
             piece = position->pieces[square];
             std::cout << " " << PieceChar[piece] << " ";
         }
@@ -57,12 +57,12 @@ void UpdateListMaterial(BOARD *position) {
                 position->Kings[BLACK] = square;
 
             if (piece == wP) {
-                SETBIT(position->pawns[WHITE], Sq120ToSq64[square]);
-                SETBIT(position->pawns[BOTH], Sq120ToSq64[square]);
+                Global::SetBit(position->pawns[WHITE], Sq120ToSq64[square]);
+                Global::SetBit(position->pawns[BOTH], Sq120ToSq64[square]);
             }
             if (piece == bP) {
-                SETBIT(position->pawns[BLACK], Sq120ToSq64[square]);
-                SETBIT(position->pawns[BOTH], Sq120ToSq64[square]);
+                Global::SetBit(position->pawns[BLACK], Sq120ToSq64[square]);
+                Global::SetBit(position->pawns[BOTH], Sq120ToSq64[square]);
             }
         }
     }
