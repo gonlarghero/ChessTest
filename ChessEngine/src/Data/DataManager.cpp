@@ -17,7 +17,7 @@ void InitFilesRanksBoard() {
 
     for (rank = RANK_1; rank <= RANK_8; ++rank) {
         for (file = FILE_A; file <= FILE_H; ++file) {
-            square = FR2SQ(file, rank);
+            square = Global::FrToSq(file, rank);
             FilesBoard[square] = file;
             RanksBoard[square] = rank;
         }
@@ -52,7 +52,7 @@ void InitializeSq120To64() {
     }
     for (rank = RANK_1; rank <= RANK_8; ++rank) {
         for (file = FILE_A; file <= FILE_H; ++file) {
-            sq = FR2SQ(file, rank);
+            sq = Global::FrToSq(file, rank);
             Sq64ToSq120[sq64] = sq;
             Sq120ToSq64[sq] = sq64;
             sq64++;

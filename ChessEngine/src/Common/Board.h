@@ -50,4 +50,10 @@ extern void ResetBoard(BOARD *position);
 extern void PrintBoard(const BOARD *position);
 extern void UpdateListMaterial(BOARD *position);
 
+namespace Board {
+
+inline bool SquareOffBoard(int sq) { return FilesBoard[sq] == SQUARE_NULL; }
+
+} // namespace Board
+
 #endif

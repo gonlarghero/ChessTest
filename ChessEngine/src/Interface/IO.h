@@ -4,7 +4,6 @@
 #include "../Common/Board.h"
 #include "../Common/Definitions.h"
 #include "../Common/Global.h"
-#include "../Common/Macros.h"
 #include "../Common/Movements/Move.h"
 #include "../Common/Validate.h"
 #include "../Engine/MoveGenerator.h"

@@ -34,7 +34,7 @@ void PrintBitBoard(U64 bb) {
     std::cout << "\n";
     for (rank = RANK_8; rank >= RANK_1; --rank) {
         for (file = FILE_A; file <= FILE_H; ++file) {
-            square120 = FR2SQ(file, rank);
+            square120 = Global::FrToSq(file, rank);
             square64 = Sq120ToSq64[square120];
 
             if ((shiftMe << square64) & bb)

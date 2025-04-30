@@ -13,12 +13,12 @@ std::string PrintSquare(const int square) {
 }
 
 std::string PrintMove(const int move) {
-    int ff = FilesBoard[FROMSQ(move)];
-    int rf = RanksBoard[FROMSQ(move)];
-    int ft = FilesBoard[TOSQ(move)];
-    int rt = RanksBoard[TOSQ(move)];
+    int ff = FilesBoard[Move::From(move)];
+    int rf = RanksBoard[Move::From(move)];
+    int ft = FilesBoard[Move::To(move)];
+    int rt = RanksBoard[Move::To(move)];
 
-    int promoted = PROMOTED(move);
+    int promoted = Move::Promoted(move);
 
     std::stringstream ss;
     ss << static_cast<char>('a' + ff) << static_cast<char>('1' + rf) << static_cast<char>('a' + ft)
@@ -26,11 +26,11 @@ std::string PrintMove(const int move) {
 
     if (promoted) {
         char pchar = 'q';
-        if (IsKn(promoted)) {
+        if (Global::IsKnight(promoted)) {
             pchar = 'n';
-        } else if (IsRQ(promoted) && !IsBQ(promoted)) {
+        } else if (Global::IsRookQueen(promoted) && !Global::IsBishopQueen(promoted)) {
             pchar = 'r';
-        } else if (!IsRQ(promoted) && IsBQ(promoted)) {
+        } else if (!Global::IsRookQueen(promoted) && Global::IsBishopQueen(promoted)) {
             pchar = 'b';
         }
         ss << pchar;
@@ -61,8 +61,8 @@ int ParseMove(char *ptrChar, BOARD *position) {
     if (ptrChar[3] > '8' || ptrChar[3] < '1')
         return NOMOVE;
 
-    int from = FR2SQ(ptrChar[0] - 'a', ptrChar[1] - '1');
-    int to = FR2SQ(ptrChar[2] - 'a', ptrChar[3] - '1');
+    int from = Global::FrToSq(ptrChar[0] - 'a', ptrChar[1] - '1');
+    int to = Global::FrToSq(ptrChar[2] - 'a', ptrChar[3] - '1');
 
     ASSERT(SquareOnBoard(from) && SquareOnBoard(to));
 
@@ -73,16 +73,18 @@ int ParseMove(char *ptrChar, BOARD *position) {
 
     for (moveNum = 0; moveNum < list->count; ++moveNum) {
         move = list->moves[moveNum].move;
-        if (FROMSQ(move) == from && TOSQ(move) == to) {
-            promotionPiece = PROMOTED(move);
+        if (Move::From(move) == from && Move::To(move) == to) {
+            promotionPiece = Move::Promoted(move);
             if (promotionPiece != EMPTY) {
-                if (IsRQ(promotionPiece) && !IsBQ(promotionPiece) && ptrChar[4] == 'r')
+                if (Global::IsRookQueen(promotionPiece) && !Global::IsBishopQueen(promotionPiece) && ptrChar[4] == 'r')
                     return move;
-                else if (!IsRQ(promotionPiece) && IsBQ(promotionPiece) && ptrChar[4] == 'b')
+                else if (!Global::IsRookQueen(promotionPiece) && Global::IsBishopQueen(promotionPiece) &&
+                         ptrChar[4] == 'b')
                     return move;
-                else if (IsRQ(promotionPiece) && IsBQ(promotionPiece) && ptrChar[4] == 'q')
+                else if (Global::IsRookQueen(promotionPiece) && Global::IsBishopQueen(promotionPiece) &&
+                         ptrChar[4] == 'q')
                     return move;
-                else if (IsKn(promotionPiece) && ptrChar[4] == 'n')
+                else if (Global::IsRookQueen(promotionPiece) && ptrChar[4] == 'n')
                     return move;
             }
             return move;
