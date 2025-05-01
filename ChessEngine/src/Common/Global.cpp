@@ -22,7 +22,7 @@ int PieceMajor[PIECE_TYPE_NUMBER] = {false, false, false, false, true, true, tru
                                      false, false, false, true,  true, true};
 int PieceMinor[PIECE_TYPE_NUMBER] = {false, false, true, true,  false, false, false,
                                      false, true,  true, false, false, false};
-int PieceValue[PIECE_TYPE_NUMBER] = {0, 100, 305, 333, 563, 950, 10953, 100, 305, 333, 563, 950, 10953};
+
 int PieceColour[PIECE_TYPE_NUMBER] = {BOTH,  WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
                                       BLACK, BLACK, BLACK, BLACK, BLACK, BLACK};
 
@@ -42,7 +42,6 @@ int PieceSlides[PIECE_TYPE_NUMBER] = {false, false, false, true, true, true, fal
                                       false, false, true,  true, true, false};
 int PiecePawn[PIECE_TYPE_NUMBER] = {false, true,  false, false, false, false, false,
                                     true,  false, false, false, false, false};
-int VictimScore[PIECE_TYPE_NUMBER] = {0, 100, 200, 300, 400, 500, 600, 100, 200, 300, 400, 500, 600};
 
 int Mirror64[BOARD_REAL_NUMBER] = {56, 57, 58, 59, 60, 61, 62, 63, 48, 49, 50, 51, 52, 53, 54, 55,
                                    40, 41, 42, 43, 44, 45, 46, 47, 32, 33, 34, 35, 36, 37, 38, 39,
@@ -78,6 +77,11 @@ int KingO[BOARD_REAL_NUMBER] = {0,   5,   5,   -10, -10, 0,   10,  5,   -30, -30
                                 -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70,
                                 -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70, -70};
 
+// Evaluation values for pieces
+int PieceValue[PIECE_TYPE_NUMBER] = {0, 100, 305, 333, 563, 950, 10953, 100, 305, 333, 563, 950, 10953};
+int VictimScore[PIECE_TYPE_NUMBER] = {0, 100, 200, 300, 400, 500, 600, 100, 200, 300, 400, 500, 600};
+
+// For some reason rand() only randomizes between 32 and 15 bits depending on the platform
 U64 RAND_AUX() { return (U64)rand(); }
 
 U64 RAND_64() {

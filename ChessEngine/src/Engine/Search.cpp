@@ -13,7 +13,7 @@ static void SortMoveList(MOVELIST *list);
 void SearchPosition(BOARD *position, SEARCHINFO *info) {
 
     int bestMove = NOMOVE;
-    int bestScore = -INFINITY;
+    int bestScore = -INFINITY_SCORE;
     int currentDepth, pvMoves, pvNum = 0;
 
     ClearForSearch(position, info);
@@ -24,7 +24,7 @@ void SearchPosition(BOARD *position, SEARCHINFO *info) {
     if (bestMove == NOMOVE) {
         for (currentDepth = 1; currentDepth <= info->depth; ++currentDepth) {
 
-            bestScore = AlphaBeta(-INFINITY, INFINITY, currentDepth, position, info, TRUE);
+            bestScore = AlphaBeta(-INFINITY_SCORE, INFINITY_SCORE, currentDepth, position, info, TRUE);
 
             if (info->stopped == true)
                 break;
@@ -63,7 +63,7 @@ static void ClearForSearch(BOARD *position, SEARCHINFO *info) {
     }
 
     for (int index = 0; index < 2; ++index) {
-        for (int index2 = 0; index2 < MAXDEPTH; ++index2) {
+        for (int index2 = 0; index2 < MAX_DEPTH; ++index2) {
             position->searchKillers[index][index2] = 0;
         }
     }
@@ -87,7 +87,7 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
     if (depth <= 0)
         return Quiescence(alpha, beta, position, info);
 
-    if ((info->nodes & 2047) == 0)
+    if ((info->nodes & SEARCH_TIMEOUT_INTERVAL) == 0)
         CheckUp(info);
 
     info->nodes++;
@@ -95,7 +95,7 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
     if ((isRepetition(position) || position->fiftyMove >= 100))
         return 0;
 
-    if (position->play > MAXDEPTH - 1)
+    if (position->play > MAX_DEPTH - 1)
         return EvalPosition(position);
 
     bool InCheck = SqAttacked(position->Kings[position->side], position->side ^ 1, position);
@@ -132,7 +132,7 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
             return beta;
     }
 
-    int Score = -INFINITY;
+    int Score = -INFINITY_SCORE;
     int PvMove = ProbePVTable(position); /*NOMOVE;*/
 
     MOVELIST list[1];
@@ -146,7 +146,7 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
     if (PvMove != NOMOVE) {
         for (int MoveNum = 0; MoveNum < list->count; ++MoveNum) {
             if (list->moves[MoveNum].move == PvMove) {
-                list->moves[MoveNum].score = 2000000;
+                list->moves[MoveNum].score = PV_MOVE_SCORE;
                 break;
             }
         }
@@ -186,7 +186,7 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 
     if (Legal == 0) {
         if (InCheck)
-            return -MATE + position->play;
+            return -MATE_SCORE + position->play;
         else
             return 0;
     }
@@ -200,7 +200,7 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 static int Quiescence(int alpha, int beta, BOARD *position, SEARCHINFO *info) {
     ASSERT(CheckBoard(position));
 
-    if ((info->nodes & 2047) == 0)
+    if ((info->nodes & SEARCH_TIMEOUT_INTERVAL) == 0)
         CheckUp(info);
 
     info->nodes++;
@@ -208,7 +208,7 @@ static int Quiescence(int alpha, int beta, BOARD *position, SEARCHINFO *info) {
     if (isRepetition(position) || position->fiftyMove >= 100)
         return 0;
 
-    if (position->play > MAXDEPTH - 1)
+    if (position->play > MAX_DEPTH - 1)
         return EvalPosition(position);
 
     int standPat = EvalPosition(position);

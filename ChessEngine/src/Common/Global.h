@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+using namespace Definitions;
+
 extern int Sq120ToSq64[BOARD_SQUARE_NUMBER];
 extern int Sq64ToSq120[BOARD_REAL_NUMBER];
 extern U64 SetMask[BOARD_REAL_NUMBER];

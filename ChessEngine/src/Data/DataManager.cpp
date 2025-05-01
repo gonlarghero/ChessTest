@@ -45,10 +45,10 @@ void InitializeSq120To64() {
     int sq = A1;
     int sq64 = 0;
     for (index = 0; index < BOARD_SQUARE_NUMBER; ++index) {
-        Sq120ToSq64[index] = 65;
+        Sq120ToSq64[index] = BOARD_REAL_NUMBER + 1;
     }
     for (index = 0; index < BOARD_REAL_NUMBER; ++index) {
-        Sq64ToSq120[index] = 120;
+        Sq64ToSq120[index] = BOARD_SQUARE_NUMBER;
     }
     for (rank = RANK_1; rank <= RANK_8; ++rank) {
         for (file = FILE_A; file <= FILE_H; ++file) {

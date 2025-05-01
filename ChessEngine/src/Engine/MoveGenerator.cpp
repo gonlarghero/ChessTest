@@ -221,18 +221,18 @@ static void AddPawnMove(const BOARD *position, int from, int to, int cap, MOVELI
 static void AddMove(const BOARD *position, int move, MOVELIST *list, bool capture) {
     ASSERT(SquareOnBoard(Move::From(move)));
     ASSERT(SquareOnBoard(Move::To(move)));
-    ASSERT(position->play >= 0 && position->play < MAXDEPTH);
+    ASSERT(position->play >= 0 && position->play < MAX_DEPTH);
 
     if (capture) {
         ASSERT(PieceValid(Move::Captured(move)));
         list->moves[list->count].score =
-            MvvLvaScores[Move::Captured(move)][position->pieces[Move::From(move)]] + 1000000;
+            MvvLvaScores[Move::Captured(move)][position->pieces[Move::From(move)]] + CAPTURE_MOVE_SCORE;
     } else {
         int fromPiece = position->pieces[Move::From(move)];
         if (position->searchKillers[0][position->play] == move)
-            list->moves[list->count].score = 900000;
+            list->moves[list->count].score = KILLER_MOVE_SCORE;
         else if (position->searchKillers[1][position->play] == move)
-            list->moves[list->count].score = 800000;
+            list->moves[list->count].score = COUNTER_MOVE_SCORE;
         else
             list->moves[list->count].score = position->searchHistory[fromPiece][Move::To(move)];
     }
@@ -249,7 +249,7 @@ static void AddEnPassantMove(const BOARD *position, int move, MOVELIST *list) {
            (RanksBoard[Move::To(move)] == RANK_3 && position->side == BLACK));
 
     list->moves[list->count].move = move;
-    list->moves[list->count].score = 105 + 1000000;
+    list->moves[list->count].score = MvvLvaScores[wP][wP] + CAPTURE_MOVE_SCORE;
     list->count++;
 }
 
@@ -276,5 +276,5 @@ static void AddCastleMove(const BOARD *position, int from, int to, MOVELIST *lis
 }
 
 static inline int MakeMove(int from, int to, int captured, int promoted, int flags) {
-    return from | (to << 7) | (captured << 14) | (promoted << 20) | flags;
+    return from | (to << TO_SHIFT) | (captured << CAPTURE_SHIFT) | (promoted << PROMOTE_SHIFT) | flags;
 }

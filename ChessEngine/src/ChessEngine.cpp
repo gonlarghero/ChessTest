@@ -1,14 +1,13 @@
-#include "Data/DataManager.h"
-#include "Engine/EngineManager.h"
-#include "Interface/InterfaceManager.h"
 #include <iostream>
-
 #include <stdlib.h>
 
 #include "Common/Board.h"
+#include "Data/DataManager.h"
 #include "Data/Fen.h"
+#include "Engine/EngineManager.h"
 #include "Engine/Perft.h"
 #include "Engine/Search.h"
+#include "Interface/InterfaceManager.h"
 
 int main(int, char **) {
 
@@ -40,9 +39,9 @@ int main(int, char **) {
         } else if (input[0] == 't') {
             TakeMove(board);
         } else if (input[0] == 'p') {
-            PerfTest(5, board);
+            PerfTest(PERF_DEPTH_DEFAULT, board);
         } else if (input[0] == 'r') {
-            max = GetPVLine(4, board);
+            max = GetPVLine(PV_LINE_DEPTH_DEFAULT, board);
             std::cout << "PvLine of " << max << " moves: ";
             for (pvnum = 0; pvnum < max; ++pvnum) {
                 move = board->pvArray[pvnum];
@@ -50,7 +49,7 @@ int main(int, char **) {
             }
             std::cout << "\n";
         } else if (input[0] == 's') {
-            info->depth = 5;
+            info->depth = SEARCH_DEPTH_DEFAULT;
             SearchPosition(board, info);
         } else {
             move = ParseMove(input, board);

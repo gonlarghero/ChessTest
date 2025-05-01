@@ -132,7 +132,7 @@ bool MakeMove(BOARD *position, int move) {
     ASSERT(SideValid(side));
     ASSERT(PieceValid(position->pieces[from]));
     ASSERT(position->historyPlay >= 0 && position->historyPlay < MAX_GAME_MOVES);
-    ASSERT(position->play >= 0 && position->play < MAXDEPTH);
+    ASSERT(position->play >= 0 && position->play < MAX_DEPTH);
 
     position->history[position->historyPlay].positionKey = position->positionKey;
 
@@ -188,7 +188,7 @@ bool MakeMove(BOARD *position, int move) {
     position->play++;
 
     ASSERT(position->historyPlay >= 0 && position->historyPlay < MAX_GAME_MOVES);
-    ASSERT(position->play >= 0 && position->play < MAXDEPTH);
+    ASSERT(position->play >= 0 && position->play < MAX_DEPTH);
 
     if (PiecePawn[position->pieces[from]]) {
         position->fiftyMove = 0;
@@ -238,7 +238,7 @@ void TakeMove(BOARD *position) {
     position->play--;
 
     ASSERT(position->historyPlay >= 0 && position->historyPlay < MAX_GAME_MOVES);
-    ASSERT(position->play >= 0 && position->play < MAXDEPTH);
+    ASSERT(position->play >= 0 && position->play < MAX_DEPTH);
 
     int move = position->history[position->historyPlay].move;
     int from = Move::From(move);

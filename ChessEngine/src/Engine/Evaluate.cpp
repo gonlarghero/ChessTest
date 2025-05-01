@@ -1,12 +1,12 @@
 #include "Evaluate.h"
 
-const int PawnIsolated = -10;
+/*const int PawnIsolated = -10;
 const int PawnPassed[8] = {0, 5, 10, 20, 35, 60, 100, 200};
 const int RookOpenFile = 10;
 const int RookSemiOpenFile = 5;
 const int QueenOpenFile = 5;
 const int QueenSemiOpenFile = 3;
-const int BishopPair = 30;
+const int BishopPair = 30;*/
 
 int EvalPosition(const BOARD *position) {
     int piece, pieceNum, square = 0;

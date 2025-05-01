@@ -8,14 +8,14 @@ const int PvSize = 0x100000 * 2;
 
 int GetPVLine(const int depth, BOARD *position) {
 
-    ASSERT(depth < MAXDEPTH);
+    ASSERT(depth < MAX_DEPTH);
 
     int move = ProbePVTable(position);
     int count = 0;
 
     while (move != NOMOVE && count < depth) {
 
-        ASSERT(count < MAXDEPTH);
+        ASSERT(count < MAX_DEPTH);
 
         if (MoveExists(position, move)) {
             MakeMove(position, move);

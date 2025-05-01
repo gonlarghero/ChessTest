@@ -36,13 +36,13 @@ typedef struct BOARD {
 
     UNDO history[MAX_GAME_MOVES];
 
-    int pieceList[PIECE_TYPE_NUMBER][MAX_OF_ONE_PICE];
+    int pieceList[PIECE_TYPE_NUMBER][MAX_OF_ONE_PIECE];
 
     PVTABLE pvTable[1];
-    int pvArray[MAXDEPTH];
+    int pvArray[MAX_DEPTH];
 
     int searchHistory[PIECE_TYPE_NUMBER][BOARD_SQUARE_NUMBER];
-    int searchKillers[2][MAXDEPTH];
+    int searchKillers[2][MAX_DEPTH];
 
 } BOARD;
 
