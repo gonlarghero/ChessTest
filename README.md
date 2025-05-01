@@ -1,7 +1,6 @@
 # ChessEngine
 
 A C++ chess engine project built from scratch with the goal of understanding and implementing the core components of chess programming — including board representation, move generation, search algorithms, and evaluation.  
-This is an exploratory project inspired by the [VICE engine](https://github.com/bluefeversoft/vice).
 
 ---
 
