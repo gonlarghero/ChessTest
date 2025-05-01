@@ -1,5 +1,5 @@
 #include <iostream>
-#include <stdlib.h>
+#include <string>
 
 #include "Common/Board.h"
 #include "Data/DataManager.h"
@@ -7,40 +7,31 @@
 #include "Engine/EngineManager.h"
 #include "Engine/Perft.h"
 #include "Engine/Search.h"
-#include "Interface/InterfaceManager.h"
+#include "Interface/Console.h"
+#include "Interface/XBoard.h"
 
 int main(int, char **) {
 
     LoadData();
     StartEngine();
-    StartInterface();
 
     BOARD board[1];
     SEARCHINFO info[1];
-    int fenret = ParseFen(START_FEN, board);
+    info->quit = false;
 
-    if (fenret != 0) {
-        return -1;
-    }
-
-    char input[6];
+    std::string input;
     int move = NOMOVE;
-
     int pvnum = 0;
     int max = 0;
 
     while (true) {
-        PrintBoard(board);
-        std::cout << "Please enter a move> ";
-        fgets(input, 6, stdin);
 
-        if (input[0] == 'q' || input[0] == 'Q') {
-            break;
-        } else if (input[0] == 't') {
-            TakeMove(board);
-        } else if (input[0] == 'p') {
+        std::cout << ">";
+        std::getline(std::cin, input);
+
+        if (input == "p") {
             PerfTest(PERF_DEPTH_DEFAULT, board);
-        } else if (input[0] == 'r') {
+        } else if (input == "r") {
             max = GetPVLine(PV_LINE_DEPTH_DEFAULT, board);
             std::cout << "PvLine of " << max << " moves: ";
             for (pvnum = 0; pvnum < max; ++pvnum) {
@@ -48,22 +39,24 @@ int main(int, char **) {
                 std::cout << PrintMove(move) << " ";
             }
             std::cout << "\n";
-        } else if (input[0] == 's') {
+        } else if (input == "s") {
             info->depth = SEARCH_DEPTH_DEFAULT;
             SearchPosition(board, info);
-        } else {
-            move = ParseMove(input, board);
-            if (move != NOMOVE) {
-                StorePVMove(board, move);
-                MakeMove(board, move);
-            } else {
-                std::cout << "Move not parsed \n";
-            }
+        } else if (input == "xboard") {
+            XBoard_Loop(board, info);
+            if (info->quit == true)
+                break;
+            continue;
+        } else if (input == "console") {
+            Console_Loop(board, info);
+            if (info->quit == true)
+                break;
+            continue;
+        } else if (input == "quit") {
+            break;
         }
-
-        fflush(stdin);
     }
 
-    free(board->pvTable->pTable);
+    delete[] board->pvTable->pTable;
     return 0;
 }

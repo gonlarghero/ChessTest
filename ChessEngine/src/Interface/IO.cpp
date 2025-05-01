@@ -1,8 +1,5 @@
 #include "IO.h"
 
-#include <iostream>
-#include <sstream>
-
 std::string PrintSquare(const int square) {
     int file = FilesBoard[square];
     int rank = RanksBoard[square];
@@ -50,7 +47,7 @@ void PrintMoveList(const MOVELIST *list) {
     std::cout << "MoveList Total " << list->count << " moves: \n\n";
 }
 
-int ParseMove(char *ptrChar, BOARD *position) {
+int ParseMove(const char *ptrChar, BOARD *position) {
 
     if (ptrChar[0] > 'h' || ptrChar[0] < 'a')
         return NOMOVE;

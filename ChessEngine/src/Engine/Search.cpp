@@ -32,21 +32,37 @@ void SearchPosition(BOARD *position, SEARCHINFO *info) {
             pvMoves = GetPVLine(currentDepth, position);
             bestMove = position->pvArray[0];
 
-            std::cout << "Depth:" << currentDepth << " score:" << bestScore << " move:" << PrintMove(bestMove)
-                      << " nodes:" << info->nodes << " ";
-
-            pvMoves = GetPVLine(currentDepth, position);
-            std::cout << "pv";
-            for (pvNum = 0; pvNum < pvMoves; ++pvNum) {
-                std::cout << " " << PrintMove(position->pvArray[pvNum]);
+            if (info->xboard && info->postThinking) {
+                std::cout << currentDepth << " " << bestScore << " " << (GetTickCount() - info->starttime) / 10 << " "
+                          << info->nodes << "\n";
+            } else if (info->postThinking) {
+                std::cout << "Depth:" << currentDepth << " score:" << bestScore << " move:" << PrintMove(bestMove)
+                          << " nodes:" << info->nodes << " " << "time" << GetTickCount() - info->starttime;
             }
-            std::cout << "\n";
-            if (info->failHigh > 0) {
-                std::cout << "Ordering: " << (info->failHighFirst / info->failHigh) << "\n";
-            } else {
-                std::cout << "Ordering: N/A\n";
+
+            if (info->postThinking) {
+                pvMoves = GetPVLine(currentDepth, position);
+                std::cout << "pv";
+                for (pvNum = 0; pvNum < pvMoves; ++pvNum) {
+                    std::cout << " " << PrintMove(position->pvArray[pvNum]);
+                }
+                std::cout << "\n";
+                if (info->failHigh > 0) {
+                    std::cout << "Ordering: " << (info->failHighFirst / info->failHigh) << "\n";
+                } else {
+                    std::cout << "Ordering: N/A\n";
+                }
             }
         }
+    }
+
+    if (info->xboard) {
+        std::cout << "move " << PrintMove(bestMove) << "\n";
+        MakeMove(position, bestMove);
+    } else {
+        std::cout << "Engine makes move: " << PrintMove(bestMove) << "\n";
+        MakeMove(position, bestMove);
+        PrintBoard(position);
     }
 }
 

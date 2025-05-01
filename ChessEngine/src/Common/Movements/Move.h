@@ -21,6 +21,9 @@ typedef struct SEARCHINFO {
 
     float failHigh;
     float failHighFirst;
+
+    bool xboard;
+    bool postThinking;
 } SEARCHINFO;
 
 typedef struct PVENTRY {
