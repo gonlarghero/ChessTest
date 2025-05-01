@@ -108,7 +108,7 @@ static int AlphaBeta(int alpha, int beta, int depth, BOARD *position, SEARCHINFO
 
     info->nodes++;
 
-    if ((isRepetition(position) || position->fiftyMove >= 100))
+    if ((isRepetition(position) || position->fiftyMove >= 100) && position->play)
         return 0;
 
     if (position->play > MAX_DEPTH - 1)

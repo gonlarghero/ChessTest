@@ -1,5 +1,10 @@
 #include "XBoard.h"
 
+void PrintOptions() {
+    std::cout << "feature ping=1 setboard=1 colors=0 usermove=1\n";
+    std::cout << "feature done=1\n";
+}
+
 void XBoard_Loop(BOARD *position, SEARCHINFO *info) {
 
     info->xboard = true;
@@ -8,6 +13,9 @@ void XBoard_Loop(BOARD *position, SEARCHINFO *info) {
     // Disable input/output buffering
     setbuf(stdout, NULL);
     setbuf(stdin, NULL);
+
+    // Vice Hack for WindBoard
+    PrintOptions();
 
     // TODO:should be send to the search function
     int movestogo[2] = {30, 30};
@@ -65,8 +73,7 @@ void XBoard_Loop(BOARD *position, SEARCHINFO *info) {
             position->side = BOTH;
             continue;
         } else if (command == "protover") {
-            std::cout << "feature ping=1 setboard=1 colors=0 usermove=1\n";
-            std::cout << "feature done=1\n";
+            PrintOptions();
         } else if (command == "sd") {
             iss >> depth;
         } else if (command == "st") {
