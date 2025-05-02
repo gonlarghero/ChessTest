@@ -83,7 +83,7 @@ To run the engine in **WinBoard**, use the `-fcp` (first chess program) option a
 ```powershell
 Start-Process "C:\Path\To\WinBoard\winboard.exe" `
   -ArgumentList '-fcp', '"C:\Path\To\ChessEngine.exe"'
-
+```
 ---
 
 ## 📌 Known Limitations
