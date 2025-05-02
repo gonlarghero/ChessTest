@@ -1,14 +1,46 @@
 #include "XBoard.h"
 
+// TODO: shouldnt be necesarry with usermove flag on
+bool IsValidMoveFormat(const char *moveStr) {
+    if (!moveStr)
+        return false;
+
+    size_t len = strlen(moveStr);
+    if (len < 4 || len > 5)
+        return false;
+
+    char fromFile = moveStr[0];
+    char fromRank = moveStr[1];
+    char toFile = moveStr[2];
+    char toRank = moveStr[3];
+
+    if (fromFile < 'a' || fromFile > 'h')
+        return false;
+    if (fromRank < '1' || fromRank > '8')
+        return false;
+    if (toFile < 'a' || toFile > 'h')
+        return false;
+    if (toRank < '1' || toRank > '8')
+        return false;
+
+    if (len == 5) {
+        char promo = moveStr[4];
+        if (promo != 'q' && promo != 'r' && promo != 'b' && promo != 'n')
+            return false;
+    }
+
+    return true;
+}
+
 void PrintOptions() {
-    std::cout << "feature ping=1 setboard=1 colors=0 usermove=1\n";
-    std::cout << "feature done=1\n";
+    std::cout << "feature ping=1 setboard=1 colors=0 usermove=1" << std::endl;
+    std::cout << "feature done=1" << std::endl;
 }
 
 void XBoard_Loop(BOARD *position, SEARCHINFO *info) {
 
     info->xboard = true;
-    info->postThinking = true;
+    info->postThinking = false;
 
     // Disable input/output buffering
     setbuf(stdout, NULL);
@@ -23,10 +55,8 @@ void XBoard_Loop(BOARD *position, SEARCHINFO *info) {
     int depth = -1;
     int movetime = -1;
     int time = -1;
-    int timeLeft = 0;
     int inc = 0;
     int engineSide = BOTH;
-    int timeleft = 0;
     int mps = 0;
     int move = NOMOVE;
 
@@ -37,20 +67,25 @@ void XBoard_Loop(BOARD *position, SEARCHINFO *info) {
             info->starttime = GetTickCount();
             info->depth = depth;
 
-            if (time != -1) {
+            if (movetime != -1) {
                 info->timeset = true;
-                time /= movestogo[position->side];
-                time -= 50;
-                info->stoptime = info->starttime + time + inc;
+                info->stoptime = info->starttime + movetime;
+            } else if (time != -1) {
+                info->timeset = true;
+                int timePerMove = time / movestogo[position->side];
+                timePerMove -= 50;
+                info->stoptime = info->starttime + timePerMove + inc;
             }
 
             if (depth == -1 || depth > MAX_DEPTH) {
                 info->depth = MAX_DEPTH;
             }
 
-            std::cout << "time:" << time << " start:" << info->starttime << " stop:" << info->stoptime
-                      << " depth:" << info->depth << " timeset:" << info->timeset
-                      << " movestogo:" << movestogo[position->side] << " mps:" << mps << "\n";
+            if (info->postThinking) {
+                std::cout << "time:" << time << " start:" << info->starttime << " stop:" << info->stoptime
+                          << " depth:" << info->depth << " timeset:" << info->timeset
+                          << " movestogo:" << movestogo[position->side] << " mps:" << mps << "\n";
+            }
 
             SearchPosition(position, info);
 
@@ -81,27 +116,21 @@ void XBoard_Loop(BOARD *position, SEARCHINFO *info) {
             iss >> seconds;
             movetime = seconds * 1000;
         } else if (command == "time") {
-            int seconds = 0;
-            iss >> seconds;
-            movetime = seconds * 1000;
+            int centiseconds = 0;
+            iss >> centiseconds;
+            time = centiseconds * 10;
         } else if (command == "level") {
-            int minutes = 0, seconds = 0;
+            int minutes = 0;
             std::string timeToken;
 
             if (!(iss >> mps >> minutes >> inc)) {
                 iss.clear();
                 iss >> mps >> timeToken >> inc;
-
-                size_t colon = timeToken.find(':');
-                if (colon != std::string::npos) {
-                    minutes = std::stoi(timeToken.substr(0, colon));
-                    seconds = std::stoi(timeToken.substr(colon + 1));
-                }
             }
 
-            timeLeft = minutes * 60000 + seconds * 1000;
             movestogo[0] = movestogo[1] = (mps != 0 ? mps : 30);
             time = -1;
+            movetime = -1;
         } else if (command == "ping") {
             std::string number;
             iss >> number;
@@ -115,10 +144,16 @@ void XBoard_Loop(BOARD *position, SEARCHINFO *info) {
             ParseFen(fen.c_str(), position);
             engineSide = BOTH;
         } else if (command == "go") {
-            engineSide = position->side;
+            engineSide = position->side ^ 1;
         } else if (command == "usermove") {
-            std::string moveStr = input.substr(command.size());
+            std::string moveStr = input.substr(command.size() + 1);
             move = ParseMove(moveStr.c_str(), position);
+            if (move == NOMOVE)
+                continue;
+            MakeMove(position, move);
+            position->play = 0;
+        } else if (IsValidMoveFormat(command.c_str())) {
+            move = ParseMove(command.c_str(), position);
             if (move == NOMOVE)
                 continue;
             MakeMove(position, move);

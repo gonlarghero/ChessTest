@@ -38,8 +38,6 @@ void InitPVTable(PVTABLE *table) {
     table->numEntries -= 2; // just in case to not go out of bounds.
     table->pTable = new PVENTRY[table->numEntries];
     ClearPVTable(table);
-
-    std::cout << "PvTable init complete with " << table->numEntries << " entries\n";
 }
 
 void ClearPVTable(PVTABLE *table) {

@@ -57,7 +57,7 @@ void SearchPosition(BOARD *position, SEARCHINFO *info) {
     }
 
     if (info->xboard) {
-        std::cout << "move " << PrintMove(bestMove) << "\n";
+        std::cout << "move " << PrintMove(bestMove) << std::endl;
         MakeMove(position, bestMove);
     } else {
         std::cout << "Engine makes move: " << PrintMove(bestMove) << "\n";
