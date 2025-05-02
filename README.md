@@ -15,6 +15,7 @@ A C++ chess engine project built from scratch with the goal of understanding and
 - **PV (Principal Variation) storage** via a simple hash table.
 - **Static evaluation** using piece-square tables and basic material count.
 - **Simple text-based command loop**: you can enter moves, undo them, test positions, or run searches interactively.
+- **Xboard support** for interface integration.
 
 ---
 
@@ -26,6 +27,7 @@ src/
 ├── Common/                   # Core engine types, board representation, macros
 │   ├── Board.cpp/.h          # Board setup, piece list, state representation
 │   ├── BitBoard.cpp/.h       # (Future support) Bitboard utility functions
+|   ├── Validate.cpp/h        # Board validation to maintain integrity
 │   └── Movements/            # Move making, legality, and PV table
 │       ├── MakeMove.cpp/.h   # Movemaking and takeback logic
 │       ├── PVTable.cpp/.h    # Principal variation logic
@@ -40,34 +42,54 @@ src/
 │   ├── MoveGenerator.cpp/.h  # Legal move generation
 │   └── Perft.cpp/.h          # Perft (performance test) implementation
 ├── Interface/                # IO helpers
-│   ├── InterfaceManager.cpp/.h
+│   ├── Console.cpp/.h        # Console input loop
+│   ├── XBoard.cpp/.h         # XBoard protocol loop
+│   ├── GameRules.cpp/.h      # End-game rules
 │   └── IO.cpp/.h             # Move input/output formatting
 ```
 
 ---
 
-##  How to Use
+##  How to Use in Console mode
 
-This is a terminal-based REPL (read-eval-print loop) interface. After running, you can interact via the console:
+This is a terminal-based REPL (read-eval-print loop) interface. After running, you can interact via the console after writing the command **console**:
 
 ### Commands:
-- `e2e4`, `d2d4`, etc. — input standard algebraic moves to play.
-- `t` — take back the last move.
-- `p` — run a perft test to depth 5 from the current position.
-- `r` — print the PV (principal variation) line.
-- `s` — run search using alpha-beta with quiescence and null move pruning.
-- `q` — quit the program.
+| Command                  | Description |
+|--------------------------|-------------|
+| `help`                  | Show all available commands |
+| `quit`                  | Exit the program |
+| `print`                 | Display the current board |
+| `move e2e4`             | Manually make a move (UCI-style coordinate input) |
+| `new`                   | Start a new game from the initial position |
+| `go`                    | Let the engine take over as the side to move |
+| `force`                 | Stop engine from thinking (manual mode) |
+| `depth x`               | Set search depth (e.g., `depth 5`) |
+| `time x`                | Set move time in seconds (e.g., `time 3`) |
+| `view`                  | Show current search settings (depth, time) |
+| `post` / `nopost`       | Enable/disable engine's thinking output |
+| `setboard <FEN>`        | Set up position via FEN string |
 
 All other inputs are attempted as moves.
 
 ---
 
+## ♟️ Using with WinBoard (XBoard Protocol)
+
+The engine now supports the **XBoard/WinBoard protocol**, allowing it to interface with graphical user interfaces like [WinBoard](http://www.open-aurec.com/wbforum/WinBoard/WB.4.3.15.zip) or [Arena](https://playwitharena.de/).
+
+To run the engine in **WinBoard**, use the `-fcp` (first chess program) option and point it to your compiled engine executable:
+
+```powershell
+Start-Process "C:\Path\To\WinBoard\winboard.exe" `
+  -ArgumentList '-fcp', '"C:\Path\To\ChessEngine.exe"'
+
+---
+
 ## 📌 Known Limitations
 
-- ❌ No GUI or UCI/XBoard protocol (currently console-only).
+- ⚠️ XBoard protocol support is functional but not fully tested — may have quirks depending on the GUI used.
 - ❌ Evaluation is very basic (only material and piece-square tables).
-- ❌ No checkmate/stalemate detection or draw evaluation beyond repetition/fifty-move rule.
-- ❌ No time management (search always runs full depth).
 - ❌ No multi-threading or advanced pruning (like LMR, SEE, etc.).
 
 ---
@@ -75,9 +97,7 @@ All other inputs are attempted as moves.
 ## 📚 Future Plans
 
 - Improve evaluation function (mobility, king safety, pawn structure, etc.).
-- Add support for UCI protocol to interface with GUIs like Arena or CuteChess.
 - Implement LMR (Late Move Reductions), futility pruning, and transposition tables.
-- Add full game loop and endgame recognition.
 - Expand PV storage and move ordering heuristics.
 - Add multi-threading for parallel search (e.g., shared hash table + split points).
 - Add opening book support (polyglot or hardcoded lines).
